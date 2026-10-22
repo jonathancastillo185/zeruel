@@ -14,6 +14,7 @@ con [Polars](https://pola.rs) nativo.
 ## Índice
 
 - [Qué es](#qué-es)
+- [Cómo se ve](#cómo-se-ve)
 - [Ventajas y desventajas](#ventajas-y-desventajas)
 - [Inicio rápido](#inicio-rápido)
 - [Usarlo como plantilla](#usarlo-como-plantilla)
@@ -80,17 +81,58 @@ Lo que trae sin configurar nada:
 
 ---
 
+## Cómo se ve
+
+Capturas de una instalación en producción real: **56 DAGs y más de 84.000
+corridas**, con el scheduler y el panel ocupando **~63 MB de RAM entre los
+dos**. Los nombres de los DAGs y los datos están difuminados a propósito.
+
+**Panel**: el estado de cada DAG de un vistazo, con su historial, su próxima
+corrida y un botón para lanzarlo.
+
+![Panel principal](docs/img/panel.png)
+
+**Corridas**: todo el historial con filtros por DAG, estado, fecha, duración y
+RAM. Cada corrida se compara contra la mediana de su DAG, así se ve enseguida
+cuál tardó más de lo normal.
+
+![Historial de corridas](docs/img/corridas.png)
+
+**Vista de un DAG**: grafo de tareas, contadores y corridas de ese pipeline.
+
+![Vista de un DAG](docs/img/dag.png)
+
+<details>
+<summary><b>Métricas</b>: salud por DAG, actividad por hora, volumen y costo de cada tarea</summary>
+
+![Métricas](docs/img/metricas.png)
+
+</details>
+
+<details>
+<summary><b>Sistema</b>: cuánto consume zeruel, cuánto ocupa el estado y quién usa la memoria</summary>
+
+![Sistema](docs/img/sistema.png)
+
+</details>
+
+Además hay pestañas de **Alertas** (fallos agrupados por causa), **Cola y
+registros** (logs en vivo) y **Configuración** (lo que dice el archivo contra
+lo que está usando el scheduler de verdad).
+
+---
+
 ## Ventajas y desventajas
 
 ### Ventajas
 
 | | |
 |---|---|
-| **Liviano en reposo** | Scheduler + panel ocupan **~49 MB de RAM** sin nada corriendo. Un Airflow mínimo (scheduler, webserver, worker, Postgres, Redis) arranca en el orden de 1-2 GB. |
+| **Liviano en reposo** | Scheduler + panel ocupan **~63 MB de RAM** administrando 56 DAGs en producción (~9 MB de memoria privada cada uno). Un Airflow mínimo (scheduler, webserver, worker, Postgres, Redis) arranca en el orden de 1-2 GB. |
 | **Un solo binario** | Se copia y anda. No hay venv, `pip install` ni una base de datos que administrar. |
 | **Aislamiento real** | Cada corrida es un proceso aparte: un pipeline que revienta no tumba al scheduler ni a los demás, y el pico de RAM que se mide es exactamente el de esa corrida. |
 | **Desplegar = copiar un archivo** | Sumar o actualizar un pipeline no obliga a reiniciar nada ni a recompilar los otros. |
-| **Rápido con datos medianos y grandes** | Polars nativo con streaming: 10 M de filas en ~6,5 s con un pico de ~830 MB en el pipeline de ejemplo. |
+| **Rápido con datos medianos y grandes** | Polars nativo con streaming: el ETL de ejemplo procesa 10 M de filas (validar, limpiar, 2 joins, agregados) en **~6,7 s**, con un pico de ~1,8 GB. |
 | **Tipado** | El grafo y las transformaciones los revisa el compilador. Una dependencia con typo o una tarea sin implementar falla al arrancar, no a las 3 de la mañana. |
 | **Pipelines chicos** | Un pipeline sin Polars pesa ~3 MB, y se pueden agrupar muchos DAGs en un binario (*bundles*). |
 
@@ -309,11 +351,13 @@ Medidos en Windows 11, binarios release. El detalle y cómo re-medirlos está en
 
 | | |
 |---|---|
-| RAM en reposo (scheduler + panel) | **49 MB** |
+| RAM en reposo (scheduler + panel, sin DAGs) | **49 MB** |
 | Binario completo (Polars + wasmtime + SQLite) | 97 MB |
 | Un pipeline sin Polars | 3 MB |
 | Arranque de un proceso de pipeline | ~170 ms |
-| ETL de ejemplo, 10 M de filas | **6,5 s**, pico de 833 MB (mediana de 3) |
+| ETL de ejemplo, 10 M de filas | **6,7 s**, pico de 1,8 GB (mediana de 3, medido desde afuera del proceso) |
+| Generar el dataset de 10 M de filas | 2,2 s |
+| En producción: 56 DAGs, 84.000+ corridas | scheduler 30 MB + panel 33 MB |
 
 > **Sobre la comparación con Python.** Existe un benchmark contra pandas y
 > polars-python ([bench/](bench)), pero **todavía no es una comparación justa**:
@@ -357,6 +401,8 @@ Lo que está hecho y lo que falta se sigue en tres documentos:
 
 **Abierto, y buen lugar para empezar a contribuir:**
 
+0. **Variables de entorno que pisan a `--config` sin avisar** (N-60 en
+   IRREGULARIDADES). Importante si tenés dos instalaciones en la misma máquina.
 1. **Benchmark justo contra Python**: mismo sistema, misma forma de medir RAM,
    mediana de varias corridas. Ver [bench/README.md](bench/README.md).
 2. **CI en Linux y macOS**: el workflow existe, pero falta dejar los tests en

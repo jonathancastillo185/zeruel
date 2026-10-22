@@ -213,7 +213,7 @@ td code{white-space:nowrap}
   Está pensado para <strong>servidores chicos</strong>. Un Airflow mínimo
   —scheduler, webserver, worker, Postgres y Redis— arranca en el orden de 1 a
   2 GB antes de procesar un solo dato. zeruel en reposo son 49 MB, y un ETL de
-  10 millones de filas le entra en 833 MB.
+  10 millones de filas termina en menos de 7 segundos con un pico de 1,8 GB.
 </p>
 <p>Lo que <strong>no</strong> es:</p>
 <ul>
@@ -678,7 +678,7 @@ PGPASSWORD = <span class="s">"${PG_PASS}"</span>   <span class="c"># lo heredan 
 <tr><td>Arrancar un run</td><td>170 ms</td><td>el precio de un proceso por run</td></tr>
 <tr><td>Binario completo</td><td>97 MB</td><td>casi todo polars y wasmtime</td></tr>
 <tr><td>Un pipeline sin polars</td><td>3 MB</td><td>el que se copia al servidor</td></tr>
-<tr><td>ETL de 10M de filas</td><td>6,5 s · 833 MB</td><td>con streaming</td></tr>
+<tr><td>ETL de 10M de filas</td><td>6,7 s · 1,8 GB</td><td>con streaming, pico externo</td></tr>
 </tbody></table></div>
 <p>
   El estado en disco arranca en 0,2 MB y crece con el historial; la poda

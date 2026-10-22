@@ -79,7 +79,7 @@ Dos cosas que valen la pena:
 | Un `--describe` (sólo si el binario cambió) | ~170 ms |
 | Compilar un pipeline nuevo desde cero (sin polars) | **80 s** |
 | Recompilar ese pipeline tras un cambio | segundos |
-| Pipeline ETL de 10M de filas | **6,5 s**, pico de 833 MB |
+| Pipeline ETL de 10M de filas | **6,7 s**, pico de **1,8 GB** (working set máximo del proceso, medido desde afuera; mediana de 3) |
 
 Los 170 ms de arranque son el precio de un proceso por run. Sobre un ETL de
 segundos o minutos es ruido; sería un problema sólo si alguna vez se quisieran

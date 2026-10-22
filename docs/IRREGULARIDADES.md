@@ -836,3 +836,45 @@ hace falta para que un parquet mapeado no consuma del techo. El descarte de
 - **Verificar:** un test que abra N conexiones desde threads y escriba
   checkpoints en paralelo sobre la misma base de disco, sin que ninguna falle.
 - **Prioridad:** P1, y es prerrequisito de la Fase 2 del ROADMAP.
+
+## Encontrados al preparar la publicación (2026-10-22)
+
+### N-60 [P0] — Una variable de entorno pisa a `--config` sin avisar
+- **Donde:** `crates/zeruel-cli/src/main.rs` (resolución de `state` y
+  `pipelines`: flag > entorno > archivo).
+- **Que pasa:** con `ZERUEL_STATE` / `ZERUEL_PIPELINES` definidas a nivel de
+  máquina (las deja una instalación), `zeruel serve --config otro.toml` ignora
+  las rutas del archivo y abre el estado de la otra instalación. El log dice
+  *"configuracion de otro.toml"* mientras usa las rutas del entorno.
+- **Impacto:** una segunda instalación de prueba en la misma máquina opera
+  sobre la base de producción: aplica su propio `timeout_secs` a las corridas
+  en curso (las marca fallidas) y publica su configuración efectiva en la
+  pestaña Configuración de la otra. Pasó de verdad al armar la demo.
+- **Arreglo:** cuando se pasa `--config` explícito, el archivo tiene que ganarle
+  al entorno, o como mínimo avisar en el log y en stderr qué variable pisó qué
+  ajuste. Además el log de arranque tiene que decir de dónde salió cada ruta.
+- **Verificar:** test que define `ZERUEL_STATE`, pasa `--config` con otro
+  `state` y comprueba cuál se usa y qué se loguea.
+
+### N-61 [P1] — El pico de RAM por tarea de `zeruel run` no es confiable
+- **Donde:** sampler de `zeruel-core/src/metrics.rs` usado por el pipeline de
+  ejemplo (`zeruel run`).
+- **Que pasa:** con el mismo dataset de 10 M de filas, `join_products` reportó
+  44 MB en una corrida y 88 MB en otra; `join_customers` 42 MB en una y
+  1.070 MB en otra. Medido desde afuera (`PeakWorkingSet64` del proceso), el
+  pico es estable: 1.774 / 1.781 / 1.775 MB. El CPU por tarea también da 0 en
+  la mayoría de las tareas.
+- **Impacto:** el número de 833 MB que figuraba en README/COSTOS/MANUAL salió
+  de esta métrica y estaba subestimado más de 2x. Ya se corrigió a 1,8 GB
+  medido desde afuera.
+- **Arreglo:** revisar el sampler (frecuencia, si mide el proceso o el árbol, y
+  si se reinicia entre tareas). Contrastar contra el pico del proceso.
+
+### N-62 [P2] — La pestaña Sistema muestra 0 MB para el scheduler instalado como servicio
+- **Donde:** `crates/zeruel-cli/src/salud.rs`.
+- **Que pasa:** el panel corre con su propia cuenta de servicio y no tiene
+  permiso para leer la memoria del proceso del scheduler (ni de las corridas),
+  así que los muestra con 0 MB. Medido con `Get-Process`: 30,5 MB.
+- **Arreglo:** que cada proceso publique su propio consumo en la base (como ya
+  publica su configuración efectiva) y que el panel lo lea de ahí; o mostrar
+  "sin permiso para medir" en vez de 0.
