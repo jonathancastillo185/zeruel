@@ -60,7 +60,7 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 name = "bundle-demo"
 version = "0.1.0"
 dependencies = [
- "nodo",
+ "zeruel",
 ]
 
 [[package]]
@@ -264,54 +264,6 @@ name = "memchr"
 version = "2.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
-
-[[package]]
-name = "nodo"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "nodo-core",
- "nodo-sdk",
- "nodo-tasks",
- "serde_json",
- "thiserror",
- "tracing",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
-name = "nodo-core"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "nodo-sdk",
- "rusqlite",
- "serde",
- "sysinfo",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "nodo-sdk"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "serde",
- "thiserror",
- "uuid",
-]
-
-[[package]]
-name = "nodo-tasks"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "nodo-sdk",
- "tracing",
-]
 
 [[package]]
 name = "ntapi"
@@ -913,6 +865,57 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "zeruel"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde_json",
+ "thiserror",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+ "zeruel-core",
+ "zeruel-sdk",
+ "zeruel-tasks",
+]
+
+[[package]]
+name = "zeruel-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "libc",
+ "rusqlite",
+ "serde",
+ "sysinfo",
+ "tracing",
+ "uuid",
+ "windows-sys",
+ "zeruel-sdk",
+]
+
+[[package]]
+name = "zeruel-sdk"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "serde",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
+name = "zeruel-tasks"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "tracing",
+ "windows-sys",
+ "zeruel-sdk",
 ]
 
 [[package]]

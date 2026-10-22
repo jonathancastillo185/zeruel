@@ -37,8 +37,8 @@ puestos a los demás.
 ```
   pipelines/                      zeruel serve (scheduler)
     ventas.exe      ◄── lanza ──  · lee la cola
-    scraping.exe                  · decide qué corre (prioridad, RAM)
-    fichap.exe                    · NO ejecuta nada en su proceso
+    reportes.exe                  · decide qué corre (prioridad, RAM)
+    inventario.exe                    · NO ejecuta nada en su proceso
          │                                    │
          └────────► state/zeruel.db ◄───────────┘
                     (SQLite-WAL: la coordinación)

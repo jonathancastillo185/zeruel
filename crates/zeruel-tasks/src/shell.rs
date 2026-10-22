@@ -270,8 +270,8 @@ impl ShellTask {
     /// programa aunque el programa este perfecto.
     ///
     /// El caso que lo destapo: un pipeline con el directorio de trabajo mal
-    /// configurado fallaba con *"no puedo ejecutar 'bun.exe': El nombre del
-    /// directorio no es valido"*. `bun.exe` existia y andaba; lo que no existia
+    /// configurado fallaba con *"no puedo ejecutar 'node.exe': El nombre del
+    /// directorio no es valido"*. `node.exe` existia y andaba; lo que no existia
     /// era el `cwd`. Se perdieron horas mirando el binario, y despues el PATH,
     /// y despues los permisos del servicio. El sistema tenia el dato exacto de
     /// que estaba mal y lo estaba escondiendo detras de una pregunta que no
@@ -697,8 +697,8 @@ mod tests_diagnostico {
     /// Un programa que existe, con un directorio de trabajo que no.
     ///
     /// Este es el caso real que costo horas: el pipeline fallaba con
-    /// *"no puedo ejecutar 'bun.exe': El nombre del directorio no es valido"*.
-    /// `bun.exe` existia y andaba. Lo que faltaba era el `cwd`, porque una
+    /// *"no puedo ejecutar 'node.exe': El nombre del directorio no es valido"*.
+    /// `node.exe` existia y andaba. Lo que faltaba era el `cwd`, porque una
     /// variable de entorno no habia llegado al proceso y quedo en su valor por
     /// defecto. El mensaje mandaba a revisar el binario, el PATH y los permisos
     /// del servicio, que estaban todos bien.

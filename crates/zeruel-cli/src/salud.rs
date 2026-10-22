@@ -12,7 +12,7 @@
 //!
 //! ```text
 //!   zeruel serve  ─┬─ ecommerce.exe   (un run)
-//!                ├─ scraping.exe    (otro run)
+//!                ├─ reportes.exe    (otro run)
 //!                └─ rrhh.exe
 //!   zeruel web     (este proceso: no tiene hijos)
 //! ```

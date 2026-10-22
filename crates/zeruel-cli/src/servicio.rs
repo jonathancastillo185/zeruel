@@ -113,7 +113,7 @@ pub fn instalar(
     // que `Config::cargar(None)` -que busca `zeruel.toml` en el directorio
     // actual- no encuentra nada. Sin config no hay `[entorno]`, y sin
     // `[entorno]` los pipelines arrancan sin las variables que necesitan: el
-    // primer run muere con "no puedo ejecutar '/opt/scraper-venv/bin/python'".
+    // primer run muere con "no puedo ejecutar '/opt/mi-venv/bin/python'".
     //
     // Por eso la ruta se guarda en los argumentos del servicio. Si no la pasan,
     // se busca el `zeruel.toml` al lado del ejecutable, que es como queda una
@@ -521,7 +521,7 @@ pub fn arrancar_y_verificar(nombre: &str) -> Result<()> {
 /// Un servicio esta sano si existe, esta corriendo **y va a volver despues de
 /// un reinicio**.
 ///
-/// Lo tercero no es un detalle: una instalacion real quedo con los dos
+/// Lo tercero no es un detalle: una instalacion en produccion quedo con los dos
 /// servicios en `Running` pero con arranque `Disabled`, secuela de un
 /// `desinstalar` que los habia dejado marcados para eliminacion. Andaba, y
 /// nadie se iba a enterar hasta el primer reinicio de la maquina — que es

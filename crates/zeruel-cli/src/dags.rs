@@ -21,7 +21,7 @@ pub fn all() -> Vec<DagSpec> {
             build: crate::pipeline::build_ecommerce,
         },
         // Ejemplo para agregar otro DAG:
-        // DagSpec { name: "scraping_precios", build: crate::dags_scraping::build_precios },
+        // DagSpec { name: "inventario", build: crate::dags_inventario::build },
     ]
 }
 

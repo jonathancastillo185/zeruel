@@ -6,9 +6,8 @@ Docker obligatorio. El estado vive en un SQLite embebido y los datos se procesan
 con [Polars](https://pola.rs) nativo.
 
 > **Estado: experimental (0.1.0).** Funciona y está probado (fmt + clippy sin
-> warnings + tests), pero la API todavía puede cambiar y hasta ahora se usó en
-> producción en una sola instalación. Leé [Ventajas y desventajas](#ventajas-y-desventajas)
-> antes de adoptarlo.
+> warnings + tests), pero la API todavía puede cambiar. Leé
+> [Ventajas y desventajas](#ventajas-y-desventajas) antes de adoptarlo.
 
 ---
 
@@ -17,6 +16,7 @@ con [Polars](https://pola.rs) nativo.
 - [Qué es](#qué-es)
 - [Ventajas y desventajas](#ventajas-y-desventajas)
 - [Inicio rápido](#inicio-rápido)
+- [Usarlo como plantilla](#usarlo-como-plantilla)
 - [Escribir un pipeline](#escribir-un-pipeline)
 - [Cómo funciona](#cómo-funciona)
 - [Comandos](#comandos)
@@ -111,7 +111,8 @@ Lo que trae sin configurar nada:
 ### ¿Cuándo conviene?
 
 - **Sí**: una máquina (VPS, servidor de oficina, PC) que tiene que correr
-  muchos ETL o scrapers programados con poco hardware, donde Airflow es
+  muchas automatizaciones programadas (ETL, reportes, descargas, cargas a una
+  base, scripts de Python o de lo que sea) con poco hardware, donde Airflow es
   demasiado pesado y un `cron` + scripts se quedó corto (sin reintentos, sin
   historial, sin saber qué falló).
 - **Sí**: procesar volúmenes que no entran en pandas, con un binario que se
@@ -179,6 +180,36 @@ autocontenida en [docs/MANUAL.html](docs/MANUAL.html)).
 
 ---
 
+## Usarlo como plantilla
+
+La idea es que armes **tus propias automatizaciones** sobre zeruel sin tocar
+el motor. El camino corto:
+
+1. **Copiá el ejemplo** [examples/pipeline-ventas](examples/pipeline-ventas) a
+   una carpeta tuya (fuera de este repo) y cambiá el nombre en su `Cargo.toml`.
+2. **Apuntá la dependencia** a zeruel: mientras no esté publicado en
+   crates.io, con `zeruel = { git = "<url-de-este-repo>" }` o con un `path` a
+   tu copia local.
+3. **Declará tu grafo** con `dag!` y escribí una tarea por paso. Si ya tenés
+   scripts (Python, Node, PowerShell, `dbt`…), no hace falta reescribirlos:
+   activá la feature `shell` y envolvelos con `ShellTask`. Ganan reintentos,
+   historial, métricas y cancelación sin cambiar una línea.
+4. **Fijá el horario** con `.cron("0 3 * * *")` y probalo suelto:
+   `cargo run -- run --param 2026-01-01 --state ./state`.
+5. **Desplegalo**: `cargo build --release` y copiá el binario a la carpeta
+   `pipelines/` de tu instalación. El scheduler lo toma en el siguiente tick,
+   sin reiniciar nada.
+
+Para muchas automatizaciones parecidas (una por cliente, por sucursal, por
+fuente de datos), mirá [examples/bundle-demo](examples/bundle-demo): genera
+varios DAGs en un bucle y los empaqueta en un solo binario.
+
+Todo lo que cambia de una máquina a otra (rutas, credenciales, conexiones) va
+en `zeruel.toml` o en variables de entorno, nunca en el código: así el mismo
+pipeline sirve en tu PC y en el servidor.
+
+---
+
 ## Escribir un pipeline
 
 Un pipeline es un crate propio que depende de `zeruel`. El ejemplo completo,
@@ -223,7 +254,7 @@ binario), `pipeline-lento` (para probar cancelación y timeouts), `wasm-hola` y
 ```
   pipelines/                     zeruel serve  (scheduler)
     ventas.exe    ◄── lanza ──   · lee la cola
-    scraping.exe                 · decide qué corre (prioridad, RAM, cupo)
+    reportes.exe                 · decide qué corre (prioridad, RAM, cupo)
          │                       · NO ejecuta nada en su proceso
          │                                   │
          └────────► state/zeruel.db ◄────────┘
@@ -307,7 +338,6 @@ zeruel/
 ├── examples/            # pipelines de ejemplo (crates independientes)
 ├── docs/                # manual, roadmap, costos, historial, irregularidades
 ├── bench/               # scripts del benchmark contra Python
-├── design/              # bocetos de las pantallas del panel
 ├── packaging/           # Dockerfile y unidad systemd
 ├── scripts/             # utilidades (fuentes empotradas del panel)
 ├── check.ps1            # fmt + clippy + tests: correlo antes de cada commit
@@ -365,10 +395,11 @@ dio cada cambio:
    por pipeline, *features* para no pagar lo que no se usa, conectores, techo
    de memoria, configuración TOML, instalador y servicios. Ahí se renombró a
    **zeruel**.
-6. **Producción**: se usó para orquestar decenas de scrapers y ETL en una
-   instalación real. Los post-mortems de lo que falló ahí (configuración que no
-   se aplicaba en silencio, permisos de servicios, procesos huérfanos) están en
-   [docs/planes/](docs/planes) y explican buena parte del diseño actual.
+6. **Uso continuo**: correrlo todos los días con decenas de DAGs sacó a la
+   luz los problemas que un benchmark no muestra (configuración que no se
+   aplicaba en silencio, permisos de servicios, procesos huérfanos). Las
+   lecciones quedaron en la sección "Trampas conocidas" del
+   [manual](docs/MANUAL.md) y explican buena parte del diseño actual.
 
 Dos reglas guiaron todo el proceso y siguen vigentes: **nada se marca como
 resuelto sin correr el comando que lo prueba**, y **cada número publicado tiene

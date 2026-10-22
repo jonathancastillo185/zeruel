@@ -40,12 +40,6 @@ dist/
 zeruel-portable/
 *.zip
 
-# --- Diseño ---------------------------------------------------------------
-# Los `.dc.html` y el `canvas.json` SI van al repo: son la fuente del diseño y
-# de ellos se regenera todo. El html empaquetado que se publica pesa megas y
-# se rearma con el helper, asi que no.
-design/*.html
-!design/*.dc.html
 
 # --- Herramientas locales -------------------------------------------------
 # Permisos que se acumulan solos por sesion, con rutas absolutas de una

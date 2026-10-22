@@ -10,7 +10,7 @@
 //! Eso pasó en una instalación real y costó horas. La secuencia fue:
 //!
 //! 1. Falla un DAG. Se mira el DAG. No es el DAG.
-//! 2. Se descubre que falta un permiso sobre `bun.exe`. Se concede.
+//! 2. Se descubre que falta un permiso sobre `node.exe`. Se concede.
 //! 3. Vuelve a fallar, ahora por el Python del venv. Se concede.
 //! 4. Vuelve a fallar: el venv es sólo un **lanzador** y delega en el Python
 //!    base, al que nadie le dio permiso. Windows reporta esa falta de permiso

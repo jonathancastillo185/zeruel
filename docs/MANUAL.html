@@ -250,7 +250,7 @@ cargo build --release
 │   └── logs/
 └── pipelines/      <span class="c"># los binarios. Copiar uno aca alcanza</span>
     ├── ventas.exe
-    └── scraping.exe</code></pre>
+    └── reportes.exe</code></pre>
 <div class="nota ojo">
   <span class="et">Lo que más sorprende</span>
   <p>
@@ -310,8 +310,8 @@ zeruel = { version = "0.1", features = ["polars"] }</code></pre>
 <h2 id="arquitectura">La arquitectura</h2>
 <pre><code>  pipelines/                 zeruel serve (scheduler)
     ventas.exe   ◄── lanza ── · lee la cola
-    scraping.exe              · decide que corre (prioridad, RAM)
-    fichap.exe                · NO ejecuta nada en su proceso
+    reportes.exe              · decide que corre (prioridad, RAM)
+    inventario.exe                · NO ejecuta nada en su proceso
          │                              │
          └──────► state/zeruel.db ◄─────┘
                   (SQLite-WAL: la coordinacion)</code></pre>
@@ -492,7 +492,7 @@ zeruel run --ram-max 512M     <span class="c"># para uno suelto</span></code></p
     <dt>metrics</dt>
     <dd>Muestrea RSS y CPU <strong>del proceso y todos sus descendientes</strong>
         cada 25&nbsp;ms, redescubriendo el árbol cada medio segundo. Mide el
-        árbol porque una tarea que envuelve un proceso externo —un scraper de
+        árbol porque una tarea que envuelve un proceso externo —un script de
         Python, un <code>dbt run</code>— no gasta memoria en el wrapper de Rust:
         la gasta el hijo, y muchas veces el nieto. El CPU sale del contador
         acumulado del sistema, no de la diferencia entre muestras.</dd>

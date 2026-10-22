@@ -1,8 +1,8 @@
 //! Varios pipelines en un mismo binario.
 //!
 //! Un binario por pipeline funciona bien cuando cada uno es sustancial. Deja de
-//! funcionar cuando son muchos y chicos: migrar a zeruel un proyecto real de scraping de precios son
-//! ~58 DAGs —ocho fijos y uno por cada uno de los ~50 scrapers— y casi todos
+//! funcionar cuando son muchos y chicos: un proyecto que genera un DAG por cada fuente de datos puede tener
+//! decenas de DAGs —unos pocos fijos y uno por fuente— y casi todos
 //! ejecutan una sola linea de shell. Sesenta binarios de 3 MB para eso no tiene
 //! sentido.
 //!
@@ -14,8 +14,8 @@
 //! # fn armar(_n: &str) -> zeruel::Pipeline { unimplemented!() }
 //! fn main() -> zeruel::Result<()> {
 //!     let mut b = zeruel::bundle();
-//!     for scraper in ["norte", "sur", "este"] {
-//!         b = b.con(armar(scraper));
+//!     for fuente in ["norte", "sur", "este"] {
+//!         b = b.con(armar(fuente));
 //!     }
 //!     b.start()
 //! }
@@ -26,8 +26,8 @@
 //! Un binario de un solo pipeline sigue funcionando sin cambios — y de hecho un
 //! `Pipeline` suelto es un bundle de uno.
 //!
-//! **La granularidad la elegis vos.** Un bundle por dominio (todos los scrapers
-//! juntos) hace que desplegar sea copiar un archivo, pero recompilar uno los
+//! **La granularidad la elegis vos.** Un bundle por dominio (todas las fuentes
+//! juntas) hace que desplegar sea copiar un archivo, pero recompilar uno los
 //! recompila a todos y un panic en la carga los saca a todos de la lista. Un
 //! binario por pipeline es lo opuesto. Para pipelines chicos que se despliegan
 //! juntos, el bundle gana.
@@ -52,7 +52,7 @@ impl Bundle {
     /// Suma un pipeline ya construido.
     ///
     /// Si dos comparten nombre, gana el ultimo — y se avisa, porque un nombre
-    /// repetido casi siempre es un error de generacion (dos scrapers que
+    /// repetido casi siempre es un error de generacion (dos fuentes que
     /// derivan el mismo id, por ejemplo).
     pub fn con(mut self, p: Pipeline) -> Self {
         let nombre = p.dag().name.clone();

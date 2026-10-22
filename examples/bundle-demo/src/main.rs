@@ -1,24 +1,24 @@
 //! Muchos pipelines chicos en un solo binario, generados en un bucle.
 //!
 //! Es la forma que toma una migracion desde Airflow cuando el proyecto genera
-//! DAGs dinamicamente — por ejemplo, uno por scraper. Sin bundles harian falta
+//! DAGs dinamicamente — por ejemplo, uno por fuente de datos. Sin bundles harian falta
 //! decenas de binarios de 3 MB para ejecutar comandos de una linea.
 
 use zeruel::prelude::*;
 
-/// Los "scrapers": en un proyecto real esto sale de leer un directorio, igual
-/// que hace el `scraping_dags.py` de Airflow.
+/// Las fuentes: en un proyecto real esto sale de leer un directorio o una
+/// tabla, igual que un DAG generado dinamicamente en Airflow.
 const FUENTES: &[&str] = &[
     "norte", "sur", "este", "oeste", "centro", "litoral", "cuyo", "patagonia",
 ];
 
 /// Un pipeline por fuente: bajar y luego cargar.
 fn para(fuente: &str) -> zeruel::Pipeline {
-    let mut dag = zeruel::dag!("scraping",
+    let mut dag = zeruel::dag!("sync",
         "bajar" => [],
         "cargar" => ["bajar"],
     );
-    dag.name = format!("scraping-{fuente}");
+    dag.name = format!("sync-{fuente}");
     dag.schedule = Some("0 */6 * * *".into());
 
     let eco = |id: &str, texto: String| {

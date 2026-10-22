@@ -364,7 +364,7 @@ fn dags(store: &Store) -> serde_json::Value {
         std::collections::BTreeMap::new();
     // Los contadores acumulados no contestan "¿esta roto AHORA?": un DAG con
     // 3 fallos de 52 se lee como sano aunque su ultima corrida haya fallado
-    // hace media hora. Eso pasaba con 7 DAGs en la instalacion real.
+    // hace media hora. Eso pasaba con 7 DAGs en una instalacion en produccion.
     let hist = store.historial_por_dag().unwrap_or_default();
     for d in store.dag_stats().unwrap_or_default() {
         let h = hist.get(&d.dag);
@@ -549,7 +549,7 @@ fn clave_efectiva(clave: &str) -> &str {
 /// Corridas, con todo el recorte hecho en SQL.
 ///
 /// Antes traia las 100 mas recientes y la interfaz filtraba sobre esas 100.
-/// Medido en la instalacion real: filtrar por "fallo" devolvia VACIO con 51
+/// Medido en una instalacion en produccion: filtrar por "fallo" devolvia VACIO con 51
 /// fallos guardados, porque las 100 ultimas cubrian una hora y media sin
 /// ninguno. Una tabla que contesta "no hay fallos" cuando los hay es peor que
 /// una tabla vacia.
@@ -798,7 +798,7 @@ fn alerts(store: &Store) -> serde_json::Value {
         .collect::<Vec<_>>();
     // Una cola que crece de forma sostenida es un sintoma que NO depende de por
     // que crece: scheduler mal configurado, pipeline lento, cron nuevo. En la
-    // instalacion real llego a 1.400 items con 22 h de espera antes de que
+    // instalacion en produccion llego a 1.400 items con 22 h de espera antes de que
     // alguien lo notara, y la causa no se parecia a nada de lo que se buscaba.
     //
     // Ventana de 6 h, 2 h de espera y 50 items: un backfill normal no llega a
@@ -862,7 +862,7 @@ fn logs(store: &Store) -> serde_json::Value {
 /// Retry con un click: encola de nuevo el ultimo run fallido (mismo dag+param).
 /// Las ultimas lineas del log de una corrida.
 ///
-/// Se lee **desde el final**, no entero. Un scraper de dos horas deja logs de
+/// Se lee **desde el final**, no entero. Una tarea de dos horas deja logs de
 /// decenas de MB y lo que se busca esta siempre al final; cargar el archivo
 /// completo para mostrar 200 lineas es la forma de que la interfaz se cuelgue
 /// justo cuando mas se la necesita.
@@ -1333,7 +1333,7 @@ mod tests {
 
     /// **El bug de la pestaña Corridas.** Con mas corridas que una pagina,
     /// filtrar por estado tiene que mirar toda la historia. Medido en la
-    /// instalacion real: la pestaña decia "no hay fallos" con 51 guardados,
+    /// instalacion en produccion: la pestaña decia "no hay fallos" con 51 guardados,
     /// porque las 100 ultimas cubrian hora y media sin ninguno.
     #[test]
     fn filtrar_por_estado_no_se_queda_en_la_primera_pagina() {

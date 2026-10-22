@@ -22,7 +22,7 @@ C:\zeruel\                  (o /opt/zeruel en Linux)
   zeruel.toml               la configuración
   pipelines\                los DAGs, compilados
      ventas.exe
-     scraping.exe           un binario puede traer muchos DAGs adentro
+     reportes.exe           un binario puede traer muchos DAGs adentro
   state\
      zeruel.db              historial, cola y métricas (SQLite)
      logs\                  un archivo por corrida
@@ -58,7 +58,7 @@ proceso *es* la corrida.
 ```
   pipelines/                     zeruel serve  (scheduler)
     ventas.exe    ◄── lanza ──   · lee la cola
-    scraping.exe                 · decide qué corre (prioridad, RAM, cupo)
+    reportes.exe                 · decide qué corre (prioridad, RAM, cupo)
          │                       · NO ejecuta nada en su proceso
          │                                   │
          └────────► state/zeruel.db ◄────────┘

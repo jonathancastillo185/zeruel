@@ -187,7 +187,7 @@ main{padding:20px 22px 40px;max-width:1240px;margin:0 auto}
 
 /* ---------- tablas ---------- */
 .tabla-wrap{overflow-x:auto}
-/* Tablas largas de Métricas: con 47 DAGs la página medía 10.000 px y había que
+/* Tablas largas de Métricas: con decenas de DAGs la página medía 10.000 px y había que
    scrollear media hora para llegar a la de abajo. El `th` ya es sticky, así que
    el encabezado queda fijo dentro del recorte sin nada más. */
 .tabla-alta{max-height:min(52vh,460px);overflow-y:auto}
@@ -469,7 +469,7 @@ svg text{font-family:var(--ui)}
   <section class="tab" id="t-met">
     <!-- Una sola barra de filtros para todas las tablas de abajo. El filtro
          viaja en el hash para que un enlace a "los fallos de ayer de
-         scraping_norte" se pueda pegar en un chat. -->
+         carga_norte" se pueda pegar en un chat. -->
     <div class="card filtros-met">
       <div class="fila-filtros">
         <div class="grupo-periodo" id="mperiodo">
@@ -1383,7 +1383,7 @@ async function ejecutarDirecto(dag, btn, param){
 
 /* ================= Corridas =================
    El filtro viaja en el hash, como en Métricas: un enlace a "los fallos de
-   scraping_norte de los últimos 7 días" se pega en un chat y abre ahí.
+   carga_norte de los últimos 7 días" se pega en un chat y abre ahí.
 
    Nada se filtra en el navegador. La versión anterior pedía las 100 más
    recientes y recortaba acá, y con 5.013 corridas guardadas eso hacía que
@@ -1545,7 +1545,7 @@ function filaCorrida(r){
 }
 
 /* Cuánto se desvió de lo normal de su DAG.
-   Se compara contra la MEDIANA y no contra el promedio: un scraper que
+   Se compara contra la MEDIANA y no contra el promedio: una tarea que
    normalmente tarda 30 s y a veces 40 minutos tiene un promedio que no describe
    ninguno de los dos casos. Sólo se marca lo que se aleja de verdad — pintar de
    color un 15% de diferencia entrena a ignorar el color. */
@@ -1579,7 +1579,7 @@ function pintarPaginado(r, f){
 
 /* ================= Métricas =================
    El filtro vive en el hash (#met?dias=7&dag=x) por dos razones: un enlace a
-   "los fallos de ayer de scraping_norte" se puede pegar en un chat, y recargar
+   "los fallos de ayer de carga_norte" se puede pegar en un chat, y recargar
    la página no pierde lo que estabas mirando.
    Todo el recorte se hace en SQL: la UI manda la query y pinta lo que vuelve. */
 
@@ -2311,7 +2311,7 @@ $$('#mperiodo .btn').forEach(b => b.onclick = () => metSet({ dias: +b.dataset.di
 $('mflimpiar').onclick = () => metSet({ ...MET_DEF });
 $('mffallos').onchange = e => metSet({ fallos: e.target.checked });
 // Los campos de texto esperan a que se termine de tipear: un pedido por tecla
-// contra 47 DAGs seria una request cada 100 ms sin que nadie la mire.
+// contra decenas de DAGs seria una request cada 100 ms sin que nadie la mire.
 for (const [id, clave] of [['mfdag','dag'], ['mfram','ram_min'], ['mfdur','dur_min']]){
   let t;
   $(id).oninput = e => {

@@ -13,10 +13,9 @@ romper. Para usarlo como usuario, ver el [manual](docs/MANUAL.md).
 | [docs/IRREGULARIDADES.md](docs/IRREGULARIDADES.md) | Lo que se encontró mal, con prioridad, arreglo y verificación |
 | [docs/HISTORIAL.md](docs/HISTORIAL.md) | Decisiones tomadas y por qué. Consultalo antes de rediscutir algo |
 | [docs/COSTOS.md](docs/COSTOS.md) | RAM, tamaño y tiempos medidos, con cómo re-medirlos |
-| [docs/planes/](docs/planes) | Post-mortems y planes de cambios grandes |
 
-> El proyecto se llamó `nodo` hasta mediados de 2026. En HISTORIAL,
-> IRREGULARIDADES y los planes vas a ver ese nombre y rutas viejas
+> El proyecto se llamó `nodo` hasta mediados de 2026. En HISTORIAL e
+> IRREGULARIDADES vas a ver ese nombre y rutas viejas
 > (`nodo-core/...`, `zeruel/crates/...`): son historia. Hoy todo es `zeruel` y
 > el workspace está en la raíz.
 

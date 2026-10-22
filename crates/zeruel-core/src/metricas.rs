@@ -11,7 +11,7 @@
 //! la purga ya borró.
 //!
 //! Todo filtro baja al `WHERE`. Es el error que este repo ya cometió dos veces
-//! (N-36, y el bug A de `docs/PLAN-UI.md`): traer 2.000 filas para mostrar 10
+//! (N-36, y otra vez en la pestaña Corridas): traer 2.000 filas para mostrar 10
 //! anda bien hasta que hay volumen, y falla justo cuando más se la necesita.
 
 use crate::store::Store;
@@ -135,8 +135,8 @@ pub struct DagStat {
 
 /// Una tarea **dentro de un DAG**.
 ///
-/// Antes se agrupaba sólo por nombre de tarea, y como los 47 scrapers tienen
-/// las mismas tres, `scrape` era una fila con 614 ejecuciones de 45 DAGs
+/// Antes se agrupaba sólo por nombre de tarea, y como las decenas de DAGs de carga tienen
+/// las mismas tres, `extraer` era una fila con cientos de ejecuciones de decenas de DAGs
 /// distintos: mezclaba uno de 4.400 s con otro de 30 s y el promedio no
 /// describía a ninguno.
 #[derive(Clone, Debug, Serialize)]
@@ -627,17 +627,17 @@ mod tests_metricas {
         assert_eq!(d[0].tasa_fallo, 1.0, "pero la tasa es sobre las terminadas");
     }
 
-    /// Antes se agrupaba solo por nombre de tarea, y los 47 scrapers tienen las
-    /// mismas tres: `scrape` era UNA fila con 614 ejecuciones de 45 DAGs, que
+    /// Antes se agrupaba solo por nombre de tarea, y las decenas de DAGs de carga tienen las
+    /// mismas tres: `extraer` era UNA fila con cientos de ejecuciones de decenas de DAGs, que
     /// mezclaba uno de 4.400s con otro de 30s.
     #[test]
     fn las_tareas_se_separan_por_dag() {
         let s = store();
-        for dag in ["scraping_norte", "scraping_sur"] {
+        for dag in ["carga_norte", "carga_sur"] {
             let r = s.create_run(dag, "p").unwrap();
             s.set_task_state(TaskStateRecord::medido(
                 r,
-                "scrape",
+                "extraer",
                 &TaskState::Success,
                 0,
                 "ok",
@@ -648,10 +648,10 @@ mod tests_metricas {
         }
         let t = s.met_por_tarea(&rango_de_hoy()).unwrap();
         assert_eq!(t.len(), 2, "una fila por (dag, tarea), no una sola: {t:?}");
-        assert!(t.iter().all(|x| x.task == "scrape"));
+        assert!(t.iter().all(|x| x.task == "extraer"));
         let mut dags: Vec<_> = t.iter().map(|x| x.dag.as_str()).collect();
         dags.sort();
-        assert_eq!(dags, ["scraping_norte", "scraping_sur"]);
+        assert_eq!(dags, ["carga_norte", "carga_sur"]);
     }
 
     /// El filtro de RAM, comparando contra el pico del run.

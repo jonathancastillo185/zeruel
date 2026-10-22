@@ -116,7 +116,7 @@ fn aplicar_impl(bytes: usize, mb: u64) -> bool {
         // lo mata por timeout— se cierra el último handle del job y Windows
         // termina a todos los procesos de adentro, que son sus descendientes
         // (heredan la membresía). Sin esto, matar al pipeline dejaba huérfanos
-        // a sus hijos: el 29-09-2026 `financiacion` quedó "Cancelled" a las 3 h
+        // a sus hijos: un DAG (`reporte_mensual`) quedó "Cancelled" a las 3 h
         // y su Python siguió escribiendo en la base horas después, pisándose
         // con la corrida siguiente.
         info.BasicLimitInformation.LimitFlags =

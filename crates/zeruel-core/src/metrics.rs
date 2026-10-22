@@ -11,13 +11,13 @@
 //!   `--workers 1` (un solo run, una task a la vez) el numero es la tarea; con
 //!   varias tasks en paralelo, todas reportan el mismo pico compartido.
 //! - **Por que el arbol y no el proceso solo** (N-58): una tarea que envuelve
-//!   un proceso externo —un scraper de Python, un `dbt run`— no gasta memoria
+//!   un proceso externo —un script de Python, un `dbt run`— no gasta memoria
 //!   en el wrapper de Rust: la gasta el hijo. Midiendo solo el proceso propio,
-//!   la instalacion real reportaba 11 MB donde habia 169 MB. Mas de 10x, y con
+//!   una instalacion en produccion reportaba 11 MB donde habia 169 MB. Mas de 10x, y con
 //!   dos consecuencias: la pestaña de Metricas mentia, y el techo de memoria
 //!   comparaba contra un numero que nunca se movia, asi que no protegia nada.
 //! - El trabajo suele estar en los **nietos**, no en los hijos: el caso real es
-//!   `scraping.exe -> python.exe (4 MB) -> python.exe (169 MB)`. Por eso el
+//!   `reportes.exe -> python.exe (4 MB) -> python.exe (169 MB)`. Por eso el
 //!   recorrido es transitivo.
 //! - El pico es la **suma del arbol en un mismo instante**, no el maximo de
 //!   cada rama por separado: lo que importa es cuanta RAM tenia tomada la
@@ -409,7 +409,7 @@ mod tests {
 /// El proceso `raiz` y todos sus descendientes, transitivamente.
 ///
 /// Hace falta transitivo y no solo los hijos directos porque el trabajo real
-/// suele estar un nivel mas abajo: `scraping.exe -> python.exe -> python.exe`,
+/// suele estar un nivel mas abajo: `reportes.exe -> python.exe -> python.exe`,
 /// donde el del medio pesa 4 MB y el de abajo 169.
 ///
 /// `sys` tiene que venir de un refresh de **todos** los procesos: el parentesco
@@ -612,7 +612,7 @@ mod tests_arbol {
     }
 
     /// El recorrido tiene que ser transitivo: el caso real es
-    /// `scraping.exe -> python.exe -> python.exe`, con el peso abajo de todo.
+    /// `reportes.exe -> python.exe -> python.exe`, con el peso abajo de todo.
     #[test]
     fn el_arbol_baja_mas_de_un_nivel() {
         let sys = System::new_all();

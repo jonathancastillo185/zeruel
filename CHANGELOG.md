@@ -33,8 +33,9 @@ La historia detallada del desarrollo previo a la publicación está en
 
 - El workspace pasó a la raíz del repositorio y los documentos internos se
   movieron a `docs/`.
-- Se reemplazaron por nombres neutros los datos de prueba que nombraban
-  sitios reales.
+- Los ejemplos, tests y documentos usan nombres genéricos de DAG; se
+  quitaron los bocetos de diseño y los planes internos de una instalación
+  concreta.
 - `packaging/zeruel.service`: la unidad systemd había quedado a medio
   renombrar (usuario y binario `nodo`, ejecutable `zeruel`) y no arrancaba.
 - `check.ps1` no corría en PowerShell 5.1 por un carácter no ASCII.

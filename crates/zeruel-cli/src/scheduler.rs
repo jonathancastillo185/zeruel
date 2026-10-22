@@ -153,7 +153,7 @@ const HIGIENE_CADA: Duration = Duration::from_secs(60);
 /// Esto corria **una sola vez, al arrancar** (N-08/N-41). Alcanzaba para el
 /// caso que motivo aquello —el daemon se cayo y vuelve—, pero no para el que
 /// se ve en produccion: un item se orfana con el scheduler andando y queda
-/// tomado hasta el proximo reinicio. En la instalacion real habia items en
+/// tomado hasta el proximo reinicio. En una instalacion en produccion habia items en
 /// `running` desde hacia **56 horas**, con su run ya terminado.
 ///
 /// El orden importa. Primero se cierran los runs muertos y despues se rescata

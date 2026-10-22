@@ -1289,7 +1289,7 @@ impl Store {
     /// que le atribuia a la tarea el pico de memoria del sistema operativo
     /// entero, y dejo tres corridas del 31/08/2026 grabadas con ~16,9 GB.
     ///
-    /// Con el maximo, el control de admision le pedia a `comparador` 16866 MB
+    /// Con el maximo, el control de admision le pedia a `consolidado` 16866 MB
     /// mas 20% = 20.239 MB. La maquina tenia 17.592 MB libres, asi que no
     /// entraba nunca. Y como no corria nunca, **jamas volvia a registrar un
     /// valor bueno**: el bloqueo se sostenia solo. Ocho items estuvieron 1,5
@@ -1325,7 +1325,7 @@ impl Store {
             };
 
             // El p95 descarta el 5% mas alto. Con menos de 20 mediciones eso es
-            // cero filas, asi que solo no alcanza: `financiacion` tenia 13
+            // cero filas, asi que solo no alcanza: `reporte_mensual` tenia 13
             // corridas y una sola disparatada, y seguia bloqueado.
             let p95 = en(n / 20);
 
@@ -1989,7 +1989,7 @@ mod tests {
     /// Una sola medicion absurda NO puede bloquear un DAG para siempre.
     ///
     /// Es el caso real del 31/08/2026: un bug atribuyo a la tarea el pico de
-    /// memoria de la maquina entera y dejo a `comparador` con 16866 MB
+    /// memoria de la maquina entera y dejo a `consolidado` con 16866 MB
     /// grabados. El control de admision le pedia 20.239 MB, la maquina tenia
     /// 17.592 libres, y como nunca lograba correr nunca volvia a medir bien:
     /// el bloqueo se sostenia a si mismo. Ocho items estuvieron 1,5 horas en
@@ -1999,7 +1999,7 @@ mod tests {
         let s = store();
         // 40 corridas normales de ~450 MB, y una sola disparatada.
         for i in 0..40 {
-            let r = s.create_run("comparador", &format!("p{i}")).unwrap();
+            let r = s.create_run("consolidado", &format!("p{i}")).unwrap();
             s.set_task_state(TaskStateRecord::medido(
                 r,
                 "t",
@@ -2012,7 +2012,7 @@ mod tests {
             .unwrap();
             s.set_run_state(r, RunState::Success).unwrap();
         }
-        let malo = s.create_run("comparador", "el-31-de-agosto").unwrap();
+        let malo = s.create_run("consolidado", "el-31-de-agosto").unwrap();
         s.set_task_state(TaskStateRecord::medido(
             malo,
             "t",
@@ -2025,7 +2025,7 @@ mod tests {
         .unwrap();
         s.set_run_state(malo, RunState::Success).unwrap();
 
-        s.enqueue("comparador", "hoy", 0).unwrap();
+        s.enqueue("consolidado", "hoy", 0).unwrap();
 
         // Con 17.592 MB libres -los que habia de verdad- tiene que lanzar.
         let p = s.pick_next(&[], 17_592, 300, 20, 0).unwrap();
@@ -2035,7 +2035,7 @@ mod tests {
         );
     }
 
-    /// El caso de `financiacion`: pocas corridas y una medicion absurda.
+    /// El caso de `reporte_mensual`: pocas corridas y una medicion absurda.
     ///
     /// Con 13 mediciones el 5% mas alto es CERO filas, asi que el p95 solo no
     /// descarta nada y el valor malo se queda. Por eso ademas se acota contra
@@ -2044,7 +2044,7 @@ mod tests {
     fn con_pocas_corridas_un_solo_disparate_tampoco_bloquea() {
         let s = store();
         for i in 0..12 {
-            let r = s.create_run("financiacion", &format!("p{i}")).unwrap();
+            let r = s.create_run("reporte_mensual", &format!("p{i}")).unwrap();
             s.set_task_state(TaskStateRecord::medido(
                 r,
                 "correr",
@@ -2057,7 +2057,7 @@ mod tests {
             .unwrap();
             s.set_run_state(r, RunState::Success).unwrap();
         }
-        let malo = s.create_run("financiacion", "el-31").unwrap();
+        let malo = s.create_run("reporte_mensual", "el-31").unwrap();
         s.set_task_state(TaskStateRecord::medido(
             malo,
             "correr",
@@ -2070,7 +2070,7 @@ mod tests {
         .unwrap();
         s.set_run_state(malo, RunState::Success).unwrap();
 
-        s.enqueue("financiacion", "hoy", 0).unwrap();
+        s.enqueue("reporte_mensual", "hoy", 0).unwrap();
         let p = s.pick_next(&[], 17_592, 300, 20, 0).unwrap();
         assert!(
             p.lanzado.is_some(),
@@ -2543,13 +2543,13 @@ mod tests_colgados {
     #[test]
     fn un_run_colgado_pasa_a_fallido() {
         let s = store();
-        let r = s.create_run("scraping_sur", "p").unwrap();
+        let r = s.create_run("carga_sur", "p").unwrap();
         envejecer(&s, 20 * 3600); // 20 horas
 
         let cerrados = s.reap_stale_runs(10_800, &[]).unwrap();
         assert_eq!(cerrados.len(), 1, "tiene que cerrarlo: {cerrados:?}");
         assert_eq!(cerrados[0].0, r);
-        assert_eq!(cerrados[0].1, "scraping_sur");
+        assert_eq!(cerrados[0].1, "carga_sur");
 
         let run = s.run_by_id(r).unwrap().unwrap();
         assert!(
@@ -2605,8 +2605,8 @@ mod tests_colgados {
     #[test]
     fn el_run_muerto_dejaba_trabado_al_item_de_la_cola() {
         let s = store();
-        s.enqueue("scraping_sur", "2026-08-25T13:00", 0).unwrap();
-        let r = s.create_run("scraping_sur", "2026-08-25T13:00").unwrap();
+        s.enqueue("carga_sur", "2026-08-25T13:00", 0).unwrap();
+        let r = s.create_run("carga_sur", "2026-08-25T13:00").unwrap();
         {
             let c = s.conn.lock().unwrap();
             c.execute("UPDATE queue SET state = 'running', taken_at = 1", [])

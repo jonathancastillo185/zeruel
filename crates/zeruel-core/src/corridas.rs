@@ -18,7 +18,7 @@
 //! justo la pregunta que se le hace.
 //!
 //! Es el mismo error que este repo ya cometió dos veces —N-36, y el bug A de
-//! `docs/PLAN-UI.md`— y por eso acá todo filtro baja al `WHERE`, la cuenta
+//! la pestaña Corridas— y por eso acá todo filtro baja al `WHERE`, la cuenta
 //! total se pide aparte, y la paginación es de verdad.
 
 use crate::store::Store;
@@ -257,7 +257,7 @@ impl Store {
     /// Mediana de duración de las corridas exitosas de un DAG.
     ///
     /// Es la referencia contra la que se compara una corrida: el promedio no
-    /// sirve porque un scraper que normalmente tarda 30 s y a veces 40 minutos
+    /// sirve porque una tarea que normalmente tarda 30 s y a veces 40 minutos
     /// tiene un promedio que no describe ninguno de los dos casos.
     fn p50_de(c: &rusqlite::Connection, dag: &str) -> Result<Option<f64>> {
         let v: Option<f64> = c
@@ -465,12 +465,12 @@ mod tests {
     fn el_texto_busca_en_el_dag_y_en_el_parametro() {
         let s = store();
         s.set_run_state(
-            s.create_run("scraping_norte", "2026-01-01").unwrap(),
+            s.create_run("carga_norte", "2026-01-01").unwrap(),
             RunState::Success,
         )
         .unwrap();
         s.set_run_state(
-            s.create_run("comparador", "norte-especial").unwrap(),
+            s.create_run("consolidado", "norte-especial").unwrap(),
             RunState::Success,
         )
         .unwrap();
@@ -543,7 +543,7 @@ impl Store {
     ///
     /// El panel mostraba contadores acumulados —"3 fallos de 52"— y eso no
     /// contesta la pregunta que se le hace: **¿esta roto AHORA?**. Medido
-    /// contra la instalacion real, `scraping_sportline` mostraba 3 de 52, que
+    /// contra una instalacion en produccion, `carga_este` mostraba 3 de 52, que
     /// se lee como sano, y su ultima corrida habia fallado media hora antes.
     /// Habia 7 DAGs asi y el panel no los distinguia de los que andaban bien.
     ///
@@ -622,17 +622,17 @@ mod tests_historial {
 
     /// **El caso que motivo esto.** Un DAG con muchas corridas buenas y pocos
     /// fallos se ve sano en el contador, aunque la ULTIMA haya fallado. Medido
-    /// en produccion: `scraping_sportline` mostraba "3 fallos de 52" con su
+    /// en produccion: `carga_este` mostraba "3 fallos de 52" con su
     /// ultima corrida fallada media hora antes.
     #[test]
     fn el_contador_dice_sano_pero_la_ultima_fallo() {
         let s = store();
         let mut estados = vec![RunState::Success; 50];
         estados.push(RunState::Failed);
-        correr(&s, "sportline", &estados);
+        correr(&s, "carga_este", &estados);
 
         let h = s.historial_por_dag().unwrap();
-        let x = &h["sportline"];
+        let x = &h["carga_este"];
         assert_eq!(
             x.ultimo_estado.as_deref(),
             Some("Failed"),
@@ -846,7 +846,12 @@ mod tests_sistemicos {
     #[test]
     fn un_error_repetido_en_varios_dags_se_reporta_como_uno_solo() {
         let s = store();
-        for dag in ["categorias", "comparador", "scraping_bari", "financiacion"] {
+        for dag in [
+            "categorias",
+            "consolidado",
+            "carga_oeste",
+            "reporte_mensual",
+        ] {
             fallar(&s, dag, "No Python at 'C:/.../Python312/python.exe'");
         }
         let v = s.fallos_sistemicos(ahora(), 3).unwrap();
@@ -959,7 +964,7 @@ impl Store {
     /// frecuente: en todos los casos el numero a mirar es el mismo.
     ///
     /// Por eso esto avisa antes y mejor que cualquier chequeo de una causa
-    /// puntual. En la instalacion real la cola llego a **1.400 items con 22
+    /// puntual. En una instalacion en produccion la cola llego a **1.400 items con 22
     /// horas de espera** antes de que alguien lo notara, y la causa —el
     /// scheduler corriendo con `paralelo=2` en vez de 6 porque no encontro su
     /// configuracion— no se parecia en nada a lo que se estuvo buscando.
@@ -1126,7 +1131,7 @@ impl Store {
     /// Mediana de duracion de cada DAG, en segundos, de una sola consulta.
     ///
     /// Se usa para estimar cuanto trabajo genera un horario. La mediana y no el
-    /// promedio: un scraper que normalmente tarda 30 s y a veces 40 minutos
+    /// promedio: una tarea que normalmente tarda 30 s y a veces 40 minutos
     /// tiene un promedio que no describe ninguno de los dos casos, y para
     /// planificar capacidad lo que importa es el caso tipico.
     pub fn medianas_por_dag(&self) -> Result<Vec<(String, f64)>> {
