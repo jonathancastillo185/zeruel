@@ -1,0 +1,86 @@
+# Nota sobre los patrones: los que NO empiezan con `/` matchean a cualquier
+# profundidad. `target/` cubre `target/` de la raiz y tambien
+# `examples/pipeline-ventas/target/`, asi que no hace falta repetirlos por
+# carpeta (antes estaban duplicados y confundia mas de lo que ayudaba).
+
+# --- Rust / cargo ---------------------------------------------------------
+# `target/` es lo que llego a pesar 57 GB y lleno el disco (N-54): cargo nunca
+# borra los artefactos de builds viejos. Conviene un `cargo clean` cada tanto.
+target/
+*.rlib
+*.pdb
+*.d
+Cargo.lock.bak
+
+# --- Datasets y estado (los genera `zeruel gen` / `zeruel run`) ---------------
+data/
+data-web/
+state/
+state-web/
+output*/
+datos/
+bench_data/
+bench_out*/
+*.parquet
+*.db
+*.db-wal
+*.db-shm
+
+# --- Binarios de pipeline desplegados -------------------------------------
+# El directorio que escanea `zeruel serve`: son binarios compilados, no fuente.
+# Cada uno pesa lo suyo, y se regeneran con `cargo build --release`.
+pipelines/
+
+# --- Logs y temporales de benchmark ---------------------------------------
+bench_*.log
+bench_*.txt
+
+# --- Distribucion ---------------------------------------------------------
+dist/
+zeruel-portable/
+*.zip
+
+# --- Diseño ---------------------------------------------------------------
+# Los `.dc.html` y el `canvas.json` SI van al repo: son la fuente del diseño y
+# de ellos se regenera todo. El html empaquetado que se publica pesa megas y
+# se rearma con el helper, asi que no.
+design/*.html
+!design/*.dc.html
+
+# --- Herramientas locales -------------------------------------------------
+# Permisos que se acumulan solos por sesion, con rutas absolutas de una
+# maquina concreta. Si algun dia hay config de proyecto para compartir, se
+# saca esta linea y se versiona `settings.json` a mano.
+.claude/
+.playwright-mcp/
+
+# --- Python (para los scripts de benchmark) -------------------------------
+__pycache__/
+*.pyc
+.venv/
+venv/
+bench_env/
+
+# --- IDE / SO -------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+.commitmsg.txt
+
+# --- Basura suelta --------------------------------------------------------
+# Respuestas de APIs que alguien guardo al pasar.
+_chromo*.json
+
+# Salidas que redirijo a archivo cuando verifico algo a mano.
+examples/*/*.txt
+
+# --- Secretos -------------------------------------------------------------
+# La configuracion real de una instalacion puede traer credenciales. Para
+# compartir un ejemplo, usar referencias a variables (`"${ZERUEL_TOKEN}"`).
+/zeruel.toml
+.env
+.env.*
+*.pem
+*.key

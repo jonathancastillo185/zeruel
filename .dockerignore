@@ -1,0 +1,6 @@
+target/
+examples/*/target/
+pruebas/
+state/
+.git/
+*.pdf

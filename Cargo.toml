@@ -1,0 +1,64 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/zeruel-sdk",
+    "crates/zeruel-core",
+    "crates/zeruel-data",
+    "crates/zeruel-cli",
+    "crates/zeruel",
+    "crates/zeruel-tasks",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+# repository = "https://github.com/<usuario>/zeruel"   # completar al publicar
+
+[workspace.dependencies]
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Vuelve tras N-46: se habia sacado por estar declarado y sin usar; ahora es
+# lo que parsea zeruel.toml.
+toml = "0.9"
+wasmtime = "47"
+tiny_http = "0.12"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-appender = "0.2"
+clap = { version = "4", features = ["derive"] }
+zip = { version = "8", default-features = false, features = ["deflate"] }
+rand = "0.9"
+
+# nucleo
+rusqlite = { version = "0.32", features = ["bundled"] }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+sysinfo = "0.39"
+# Señales de apagado. `termination` suma SIGTERM y SIGHUP a SIGINT: sin eso
+# `systemctl stop` mataria el proceso de golpe y dejaria los pipelines
+# hijos huerfanos.
+ctrlc = { version = "3", features = ["termination"] }
+
+# datos
+# el crate Rust de polars va en 0.5x; python 1.43.1 envuelve 0.54.4
+# el crate Rust de polars va en 0.5x (la version 1.x es de Python); 0.55.2 es la mas nueva
+polars = { version = "0.55.2", features = ["lazy", "parquet", "csv", "dtype-categorical", "strings", "temporal", "streaming", "sql"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
+
+# El perfil dev generaba una `target/` de decenas de GB (N-54): en Windows cada
+# build escribe un `.pdb` de ~2.4 GB del binario y ~2 GB por cada crate grande
+# (polars), y cargo NUNCA borra los de builds anteriores — se acumulan por hash.
+#
+# `line-tables-only` deja lo unico que se usa en la practica: los backtraces
+# siguen mostrando archivo y numero de linea. Lo que se pierde es inspeccionar
+# variables en un debugger paso a paso; si hace falta para algo puntual, se
+# sube a `debug = true` un rato y despues se vuelve.
+[profile.dev]
+debug = "line-tables-only"

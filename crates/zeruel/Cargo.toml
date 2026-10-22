@@ -1,0 +1,51 @@
+[package]
+name = "zeruel"
+description = "Motor de orquestacion de pipelines ETL: durabilidad por checkpoint, reintentos y metricas, en un binario sin dependencias"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# Este es el crate que se agrega con `cargo add zeruel`. Es una fachada: no tiene
+# logica propia mas alla del harness de pipeline (`pipeline()`), y re-exporta lo
+# que hace falta para declarar y correr un DAG.
+#
+# Por default trae lo minimo: engine + store + tareas propias en Rust. polars y
+# wasmtime son opt-in, porque son el 47% del arbol de dependencias (155 y 31
+# crates) y no todo pipeline los necesita.
+
+[dependencies]
+zeruel-sdk = { path = "../zeruel-sdk" }
+zeruel-core = { path = "../zeruel-core", default-features = false }
+zeruel-data = { path = "../zeruel-data", optional = true }
+zeruel-tasks = { path = "../zeruel-tasks", optional = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[features]
+default = []
+
+# Tareas SQL sobre Parquet (motor polars-sql). Arrastra polars.
+sql = ["zeruel-core/sql"]
+# Tareas WASM en sandbox (wasmtime): limites de fuel y memoria, cancelacion dura.
+wasm = ["zeruel-core/wasm"]
+# Tareas de datos listas para usar (PolarsTask, JoinTask, ExportCsvTask).
+polars = ["dep:zeruel-data"]
+# Correr comandos externos como tareas del grafo (ShellTask).
+shell = ["dep:zeruel-tasks"]
+# Bajar de una API o URL como tarea del grafo (HttpTask).
+http = ["dep:zeruel-tasks", "zeruel-tasks/http"]
+# Postgres como origen y destino, via COPY (streaming, sin cargar la tabla).
+postgres = ["dep:zeruel-tasks", "zeruel-tasks/postgres"]
+# Snowflake por su API REST (staging + COPY INTO), sin driver nativo.
+snowflake = ["dep:zeruel-tasks", "zeruel-tasks/snowflake"]
+# Leer y escribir contra S3 / MinIO / Azure / GCS, con el streaming de polars.
+cloud = ["polars", "zeruel-data/cloud"]
+# Todo.
+full = ["sql", "wasm", "polars", "shell", "http", "cloud", "postgres", "snowflake"]
+
+[dev-dependencies]
+tempfile = "3"

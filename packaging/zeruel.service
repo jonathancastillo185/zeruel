@@ -1,0 +1,62 @@
+# Unidad systemd para el scheduler.
+#
+# Instalar:
+#   sudo useradd --system --home /var/lib/zeruel --shell /usr/sbin/nologin zeruel
+#   sudo mkdir -p /var/lib/zeruel/{state,pipelines} && sudo chown -R zeruel:zeruel /var/lib/zeruel
+#   sudo cp zeruel /usr/local/bin/ && sudo cp zeruel.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now zeruel
+#
+# Desplegar un pipeline nuevo NO requiere reiniciar: copiar el binario a
+# /var/lib/zeruel/pipelines y el scheduler lo levanta en el tick siguiente.
+
+[Unit]
+Description=zeruel — scheduler de pipelines
+Documentation=file:/usr/local/share/doc/zeruel/MANUAL.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=zeruel
+Group=zeruel
+WorkingDirectory=/var/lib/zeruel
+
+ExecStart=/usr/local/bin/zeruel serve \
+    --state /var/lib/zeruel/state \
+    --pipelines /var/lib/zeruel/pipelines \
+    --gracia-secs 30
+
+# --- Apagado ---------------------------------------------------------------
+# SIGTERM es lo que `zeruel serve` escucha para apagar ordenado: deja de lanzar,
+# espera a los runs en curso hasta --gracia-secs, y lo que corte vuelve a la
+# cola para que el arranque siguiente lo retome.
+KillSignal=SIGTERM
+# TIENE que ser mayor que --gracia-secs. Si systemd manda SIGKILL antes de que
+# termine el apagado, el proceso muere sin reencolar nada y se pierde
+# exactamente el trabajo que el apagado ordenado existe para no perder.
+TimeoutStopSec=60
+# Solo al proceso principal: los pipelines hijos los administra el scheduler,
+# que sabe marcar su run y devolverlos a la cola. Que systemd los mate en
+# paralelo dejaria runs a medio cerrar.
+KillMode=mixed
+
+Restart=on-failure
+RestartSec=5
+
+# --- Aislamiento -----------------------------------------------------------
+# El scheduler solo necesita escribir en su propio directorio de estado.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/zeruel
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+# Los logs de zeruel van a journald; los de cada run, a state/logs/run-<id>.log.
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

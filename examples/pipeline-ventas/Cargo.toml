@@ -1,0 +1,17 @@
+[package]
+name = "pipeline-ventas"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Crate INDEPENDIENTE, fuera del workspace de zeruel a proposito: es el ejemplo de
+# como se ve un pipeline de verdad, escrito por alguien que usa zeruel como
+# libreria. La tabla `[workspace]` vacia es lo que lo desengancha del workspace
+# padre.
+[workspace]
+
+[dependencies]
+# En un proyecto real esto seria `zeruel = "0.1"`. Aca va por path para que el
+# ejemplo compile contra el codigo del repo.
+zeruel = { path = "../../crates/zeruel" }
+anyhow = "1"

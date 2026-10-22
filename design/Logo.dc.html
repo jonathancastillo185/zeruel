@@ -1,0 +1,460 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Saira:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    /* ══ TEMA ══════════════════════════════════════════════════════════════
+       Cinco variantes sobre la misma estructura. Cambia el chasis (fondo,
+       paneles, bordes, rampa de texto) y la SENAL: el color que reclama
+       atencion.
+
+       1. La senal tiene dos papeles y ningun tercero: estructura (filetes,
+          escuadras, logo) y el estado "corriendo". Una senal que ademas
+          fuera adorno dejaria de avisar cualquier cosa.
+       2. Exito, fallo y cancelado NO cambian entre temas. Son funcionales:
+          nadie puede tener que reaprender un color por cambiar de tema.
+       3. Cada senal se valido contra esos tres estados: los cuatro pares se
+          separan para deuteranopia, protanopia y tritanopia.
+       ═══════════════════════════════════════════════════════════════════ */
+    .app{
+      --bg:#0a0b0c; --panel:#131517; --panel2:#1a1d20;
+      --borde:#2b2f34; --borde2:#21252a; --hover:#23272c;
+      --senal:#ffd21e; --senal-bg:#302711;
+      --texto:#e8eaec; --tenue:#9aa0a6; --debil:#6b7177;
+      --linea:#4a5057;
+    }
+    .app[data-tema="eva01"]{
+      --bg:#0b0814; --panel:#150f22; --panel2:#1b1430;
+      --borde:#33265c; --borde2:#241a42; --hover:#241a42;
+      --senal:#a3e635; --senal-bg:#23300f;
+      --texto:#e9e4f5; --tenue:#a79dc0; --debil:#7a7095;
+      --linea:#4d4270;
+    }
+    .app[data-tema="eva02"]{
+      --bg:#100708; --panel:#1a0d0f; --panel2:#221114;
+      --borde:#3d1e22; --borde2:#2c161a; --hover:#2c161a;
+      --senal:#ff8c1a; --senal-bg:#33200a;
+      --texto:#f2e6e5; --tenue:#c2a5a3; --debil:#96756f;
+      --linea:#66393c;
+    }
+    .app[data-tema="eva00"]{
+      --bg:#060d16; --panel:#0d1626; --panel2:#111d33;
+      --borde:#1f3459; --borde2:#172742; --hover:#172742;
+      --senal:#ffb020; --senal-bg:#33260c;
+      --texto:#dfe9f7; --tenue:#93a9c6; --debil:#6a8099;
+      --linea:#3a5680;
+    }
+    .app[data-tema="eva08"]{
+      --bg:#12060f; --panel:#1c0d19; --panel2:#241120;
+      --borde:#4a1f3d; --borde2:#351629; --hover:#351629;
+      --senal:#22d3ee; --senal-bg:#0c2c33;
+      --texto:#f5e6f1; --tenue:#c3a1b8; --debil:#96758c;
+      --linea:#703a5e;
+    }
+    .app{
+      --ok:#35c9a8;   --ok-bg:#0e2a25;
+      --fail:#ff5252; --fail-bg:#2e1414;
+      --canc:#7d858c; --canc-bg:#1c2024;
+      --run:var(--senal); --run-bg:var(--senal-bg);
+      /* Series de los graficos. Pasan los seis chequeos contra TODOS los
+         pares. La senal no entra aca: esta reservada. */
+      --c1:#4090c8; --c2:#c47a2e; --c3:#c9548a; --c4:#5aa870;
+      background:var(--bg); color:var(--texto); min-height:100%;
+      font-family:'Saira',ui-sans-serif,system-ui,sans-serif;
+      font-size:14px; line-height:1.5;
+    }
+    .app *{box-sizing:border-box}
+    a{color:var(--senal);text-decoration:none}
+    a:hover{color:#fff}
+
+    /* Michroma es de un solo peso y muy ancha: sirve como titulo en
+       mayusculas y poco mas. Esa limitacion es la que da el tono de consola. */
+    .top{
+      display:flex; align-items:center; gap:15px; flex-wrap:wrap;
+      background:var(--bg); padding:13px 22px 11px;
+      border-bottom:1px solid var(--borde);
+    }
+    .marca{
+      font-family:'Michroma',sans-serif; font-size:14px; letter-spacing:.22em;
+      text-transform:uppercase; display:flex; align-items:center; gap:11px;
+    }
+    .marca svg{stroke:var(--senal)}
+    .ruta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tenue)}
+    .crece{flex:1}
+    /* La cinta diagonal va una sola vez por pantalla: repetida seria ruido. */
+    .cinta{height:5px;background:repeating-linear-gradient(-45deg,
+      var(--senal) 0 9px, var(--bg) 9px 18px)}
+
+    .cuerpo{padding:18px 22px 26px}
+    .t2{
+      font-family:'Michroma',sans-serif; font-size:9px; letter-spacing:.2em;
+      text-transform:uppercase; color:var(--tenue);
+      margin:0 0 12px; padding-bottom:8px; border-bottom:1px solid var(--borde);
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .t2 .sub{
+      font-family:'Saira',sans-serif; font-size:11.5px; letter-spacing:0;
+      text-transform:none; color:var(--debil); font-weight:400;
+    }
+
+    /* Angulos rectos: el radio redondeado es lo primero que le saca lo
+       industrial a una interfaz. Las escuadras marcan las esquinas. */
+    .caja{
+      background:var(--panel); border:1px solid var(--borde); border-radius:0;
+      padding:15px 17px; position:relative;
+    }
+    .caja::before,.caja::after{
+      content:''; position:absolute; width:8px; height:8px;
+      border-color:var(--senal); border-style:solid; pointer-events:none;
+    }
+    .caja::before{top:-1px;left:-1px;border-width:1px 0 0 1px}
+    .caja::after{bottom:-1px;right:-1px;border-width:0 1px 1px 0}
+
+    .mic{
+      font-family:'Saira',sans-serif; font-size:9.5px; font-weight:600;
+      letter-spacing:.16em; text-transform:uppercase; color:var(--debil);
+    }
+    .mono{font-family:'JetBrains Mono',monospace;font-size:11.5px}
+    .cifra{
+      font-family:'Michroma',sans-serif; font-size:21px; color:var(--texto);
+      font-variant-numeric:tabular-nums; line-height:1.25;
+    }
+    .cifra.avisa{color:var(--senal)}
+    .cifra.mal{color:var(--fail)}
+
+    /* El color nunca va solo: la pastilla siempre lleva su palabra. */
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      font-family:'Saira',sans-serif; font-size:10px; font-weight:600;
+      letter-spacing:.13em; text-transform:uppercase;
+      padding:3px 8px; border:1px solid; border-radius:0;
+    }
+    .lat{width:6px;height:6px;background:currentColor;display:inline-block;
+      animation:lat 1.1s steps(1,end) infinite}
+    @keyframes lat{0%,49%{opacity:1}50%,100%{opacity:.15}}
+    @media (prefers-reduced-motion:reduce){.lat{animation:none}}
+
+    .btn{
+      font-family:'Saira',sans-serif; font-size:11px; font-weight:600;
+      letter-spacing:.13em; text-transform:uppercase;
+      background:var(--senal); color:var(--bg); border:1px solid var(--senal);
+      padding:7px 15px; border-radius:0; cursor:pointer;
+    }
+    .btn:hover{background:#fff;border-color:#fff}
+    .btn.g2{background:transparent;color:var(--tenue);border-color:var(--borde)}
+    .btn.g2:hover{background:var(--hover);color:var(--texto);border-color:var(--debil)}
+    .btn.d{background:transparent;color:var(--fail);border-color:var(--fail)}
+    .btn.d:hover{background:var(--fail);color:#fff}
+
+    table{width:100%;border-collapse:collapse;font-size:12.5px}
+    th{
+      font-family:'Saira',sans-serif; font-size:9.5px; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--debil); text-align:left;
+      font-weight:600; padding:0 10px 7px; border-bottom:1px solid var(--borde);
+      white-space:nowrap;
+    }
+    td{padding:7px 10px;border-bottom:1px solid var(--borde2);vertical-align:middle}
+    td.n{text-align:right;font-family:'JetBrains Mono',monospace;
+      font-variant-numeric:tabular-nums}
+    tbody tr:hover td{background:var(--hover)}
+
+    .campo{
+      display:flex; justify-content:space-between; gap:14px;
+      padding:7px 0; border-bottom:1px solid var(--borde2); font-size:12.5px;
+    }
+    .campo:last-child{border-bottom:0}
+    .campo .k{color:var(--tenue);white-space:nowrap}
+    .campo .v{font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right}
+
+    /* Barras de una sola serie: la senal apagada, para que un grafico lleno
+       de barras no compita con el estado. */
+    .canal{height:13px;background:var(--panel2);border:1px solid var(--borde2);
+      position:relative}
+    .canal i{position:absolute;left:0;top:0;bottom:0;background:var(--senal);
+      opacity:.72}
+    .franja{display:flex;align-items:center;gap:11px;margin-bottom:7px}
+    .franja .et{width:118px;flex:none;text-align:right;font-size:11.5px;
+      color:var(--tenue)}
+    .franja .vl{width:72px;flex:none;text-align:right;
+      font-family:'JetBrains Mono',monospace;font-size:11px}
+    /* Cuatro direcciones de logo. Cada una se muestra en los tres tamaños en
+       los que un logo se rompe de verdad:
+
+         - grande, donde se juzga el dibujo;
+         - en la cabecera, junto al nombre, que es donde vive el 90% del tiempo;
+         - a 16 px, que es el que decide si sirve o no. Un logo que a 16 px se
+           convierte en una mancha no es un logo, es una ilustracion.
+
+       Ninguna copia el diseño del Angel: eso es de Khara, y usar el nombre
+       biblico para despues dibujar al personaje seria volver a meterse en el
+       problema que el nombre biblico evita. Todas salen del significado
+       ("Brazo de Dios", el 14, angelologia). */
+    .dir{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;
+      padding:20px 0;border-bottom:1px solid var(--borde2)}
+    .dir:last-child{border-bottom:0}
+    .lienzo{width:150px;height:150px;background:var(--panel2);
+      border:1px solid var(--borde2);display:flex;align-items:center;
+      justify-content:center}
+    .titulo{font-family:'Michroma',sans-serif;font-size:11px;letter-spacing:.18em;
+      text-transform:uppercase;color:var(--senal);margin-bottom:7px}
+    .lectura{font-size:12px;color:var(--tenue);line-height:1.6;max-width:520px}
+    .tamanos{display:flex;align-items:center;gap:20px;margin-top:13px;flex-wrap:wrap}
+    .chip{display:flex;align-items:center;gap:9px;padding:6px 11px;
+      background:var(--bg);border:1px solid var(--borde)}
+    .lockup{font-family:'Michroma',sans-serif;font-size:13px;letter-spacing:.2em;
+      text-transform:uppercase}
+    .mini{width:16px;height:16px;background:var(--bg);border:1px solid var(--borde);
+      display:flex;align-items:center;justify-content:center}
+  </style>
+</helmet>
+
+<div class="app" data-tema="{{tema}}">
+  <div class="top">
+    <span class="marca">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="4.5" r="2.5"/><circle cx="5" cy="19.5" r="2.5"/><circle cx="19" cy="19.5" r="2.5"/>
+        <path d="M12 7v4M12 11l-5.5 6M12 11l5.5 6"/>
+      </svg>
+      zeruel
+    </span>
+    <span class="ruta">marca / logo</span>
+    <span class="crece"></span>
+    <span class="ruta">4 direcciones</span>
+  </div>
+  <div class="cinta"></div>
+
+  <div class="cuerpo">
+    <div style="max-width:760px;margin-bottom:20px">
+      <div style="font-family:'Michroma',sans-serif;font-size:19px;letter-spacing:.24em;
+                  text-transform:uppercase;margin-bottom:8px">zeruel</div>
+      <div style="font-size:13px;color:var(--tenue);line-height:1.6">
+        Motor de automatizacion en Rust. Un proceso por pipeline, techo de memoria
+        por run, 49 MB en reposo.
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--borde)">
+          El nombre solo no dice "tecnologia" — Kafka tampoco, y es la plataforma de
+          streaming mas desplegada del mundo. Lo dicen la tipografia, el descriptor
+          de arriba y el logo. Las cuatro direcciones de abajo salen del significado
+          del nombre, nunca del diseño del Angel.
+        </div>
+      </div>
+    </div>
+
+    <div class="caja">
+
+      <!-- A · ALAS -->
+      <div class="dir">
+        <div class="lienzo">
+          <svg width="104" height="104" viewBox="0 0 48 48">
+            <g fill="var(--senal)">
+              <rect x="6"  y="8"  width="36" height="4"/>
+              <rect x="6"  y="16" width="28" height="4"/>
+              <rect x="6"  y="24" width="20" height="4"/>
+              <rect x="6"  y="32" width="12" height="4"/>
+            </g>
+            <rect x="6" y="40" width="6" height="4" fill="var(--tenue)"/>
+          </svg>
+        </div>
+        <div>
+          <div class="titulo">A · Alas</div>
+          <div class="lectura">
+            Barras angulares de largo decreciente. Se lee como las alas de un serafin,
+            como grafico de barras, como medidor de señal y como pila de datos —
+            cuatro lecturas, todas ciertas para lo que hace. Es la mas simple de
+            reproducir y la que mejor aguanta en chico.
+          </div>
+          <div class="tamanos">
+            <div class="chip">
+              <svg width="19" height="19" viewBox="0 0 48 48"><g fill="var(--senal)">
+                <rect x="6" y="8" width="36" height="4"/><rect x="6" y="16" width="28" height="4"/>
+                <rect x="6" y="24" width="20" height="4"/><rect x="6" y="32" width="12" height="4"/>
+              </g></svg>
+              <span class="lockup">zeruel</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini">
+                <svg width="12" height="12" viewBox="0 0 48 48"><g fill="var(--senal)">
+                  <rect x="6" y="8" width="36" height="5"/><rect x="6" y="17" width="28" height="5"/>
+                  <rect x="6" y="26" width="20" height="5"/><rect x="6" y="35" width="12" height="5"/>
+                </g></svg>
+              </div>
+              <span class="mono" style="color:var(--debil)">16 px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B · TRAZA -->
+      <div class="dir">
+        <div class="lienzo">
+          <svg width="104" height="104" viewBox="0 0 48 48" fill="none">
+            <path d="M10 10 H38 L20 26 H38" stroke="var(--senal)" stroke-width="4"
+                  stroke-linecap="square" stroke-linejoin="miter"/>
+            <path d="M38 26 V38 H10" stroke="var(--senal)" stroke-width="4"
+                  stroke-linecap="square"/>
+            <circle cx="10" cy="10" r="3.4" fill="var(--senal)"/>
+            <circle cx="38" cy="38" r="3.4" fill="var(--senal)"/>
+            <circle cx="38" cy="26" r="2.6" fill="var(--bg)" stroke="var(--senal)" stroke-width="2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="titulo">B · Traza</div>
+          <div class="lectura">
+            La Z dibujada como pista de circuito impreso, con un nodo en cada quiebre
+            y una via en el medio. Es la inicial y es tecnologia en la misma forma,
+            que es exactamente lo que te preocupaba. Angulos rectos, igual que el
+            resto del sistema.
+          </div>
+          <div class="tamanos">
+            <div class="chip">
+              <svg width="19" height="19" viewBox="0 0 48 48" fill="none">
+                <path d="M10 10 H38 L20 26 H38" stroke="var(--senal)" stroke-width="5" stroke-linecap="square"/>
+                <path d="M38 26 V38 H10" stroke="var(--senal)" stroke-width="5" stroke-linecap="square"/>
+              </svg>
+              <span class="lockup">zeruel</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini">
+                <svg width="12" height="12" viewBox="0 0 48 48" fill="none">
+                  <path d="M10 10 H38 L20 26 H38" stroke="var(--senal)" stroke-width="7" stroke-linecap="square"/>
+                  <path d="M38 26 V38 H10" stroke="var(--senal)" stroke-width="7" stroke-linecap="square"/>
+                </svg>
+              </div>
+              <span class="mono" style="color:var(--debil)">16 px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C · NUCLEO -->
+      <div class="dir" style="background:var(--panel2);padding-left:14px;padding-right:14px;box-shadow:inset 2px 0 0 var(--senal)">
+        <div class="lienzo">
+          <svg width="104" height="104" viewBox="0 0 48 48" fill="none">
+            <path d="M6 14 V6 H14"  stroke="var(--senal)" stroke-width="3"/>
+            <path d="M42 34 V42 H34" stroke="var(--senal)" stroke-width="3"/>
+            <rect x="15" y="15" width="18" height="18" transform="rotate(45 24 24)"
+                  fill="none" stroke="var(--senal)" stroke-width="3"/>
+            <rect x="21" y="21" width="6" height="6" fill="var(--senal)"/>
+          </svg>
+        </div>
+        <div>
+          <div class="titulo">C · Nucleo <span class="pill" style="background:var(--senal-bg);color:var(--senal);border-color:var(--senal);margin-left:8px">elegida</span></div>
+          <div class="lectura">
+            Un nucleo geometrico entre las escuadras de esquina. No inventa una firma
+            nueva: <b>usa la que ya tiene todo el sistema</b> — las escuadras estan en
+            cada panel de las trece pantallas. El logo y la interfaz quedan hechos de
+            la misma pieza.
+          </div>
+          <div class="tamanos">
+            <div class="chip">
+              <svg width="19" height="19" viewBox="0 0 48 48" fill="none">
+                <path d="M6 14 V6 H14" stroke="var(--senal)" stroke-width="4"/>
+                <path d="M42 34 V42 H34" stroke="var(--senal)" stroke-width="4"/>
+                <rect x="15" y="15" width="18" height="18" transform="rotate(45 24 24)"
+                      fill="none" stroke="var(--senal)" stroke-width="4"/>
+              </svg>
+              <span class="lockup">zeruel</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini">
+                <svg width="12" height="12" viewBox="0 0 48 48" fill="none">
+                  <rect x="14" y="14" width="20" height="20" transform="rotate(45 24 24)"
+                        fill="none" stroke="var(--senal)" stroke-width="7"/>
+                </svg>
+              </div>
+              <span class="mono" style="color:var(--debil)">16 px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D · BRAZO -->
+      <div class="dir">
+        <div class="lienzo">
+          <svg width="104" height="104" viewBox="0 0 48 48" fill="none">
+            <rect x="8" y="8" width="32" height="32" stroke="var(--linea)" stroke-width="2"/>
+            <path d="M8 40 L40 8" stroke="var(--senal)" stroke-width="6" stroke-linecap="square"/>
+            <path d="M30 8 H40 V18" stroke="var(--senal)" stroke-width="3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="titulo">D · Brazo</div>
+          <div class="lectura">
+            Un solo corte que atraviesa el marco. Es lo mas literal de las cuatro
+            —"Brazo de Dios", el que pasa por todas las defensas— y lo mas duro.
+            Tambien la mas riesgosa: una diagonal sola puede leerse como una barra
+            de prohibido si el marco no se ve.
+          </div>
+          <div class="tamanos">
+            <div class="chip">
+              <svg width="19" height="19" viewBox="0 0 48 48" fill="none">
+                <rect x="8" y="8" width="32" height="32" stroke="var(--linea)" stroke-width="3"/>
+                <path d="M8 40 L40 8" stroke="var(--senal)" stroke-width="7" stroke-linecap="square"/>
+              </svg>
+              <span class="lockup">zeruel</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini">
+                <svg width="12" height="12" viewBox="0 0 48 48" fill="none">
+                  <path d="M8 40 L40 8" stroke="var(--senal)" stroke-width="9" stroke-linecap="square"/>
+                </svg>
+              </div>
+              <span class="mono" style="color:var(--debil)">16 px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px">
+      <div class="caja">
+        <div class="t2">Como se decide</div>
+        <div style="font-size:12.5px;color:var(--tenue);line-height:1.65">
+          Mira la columna de 16 px, no la grande. Un logo vive casi siempre chico —
+          en una pestaña del navegador, en un favicon, al lado del nombre en una
+          terminal— y ahi es donde tres de estas cuatro se defienden y una se
+          empieza a ensuciar.
+          <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--borde)">
+            Probalas tambien con los otros temas: el selector de arriba cambia la
+            señal, y un logo que solo funciona en amarillo no sirve.
+          </div>
+        </div>
+      </div>
+      <div class="caja">
+        <div class="t2">Lo que el logo NO tiene que hacer</div>
+        <div style="font-size:12.5px;color:var(--tenue);line-height:1.65">
+          Explicar que es un ETL. Ningun logo lo hace: el de Kafka son tres circulos,
+          el de Rust es un engranaje con una R. La categoria la dice el descriptor
+          —<b>motor de automatizacion en Rust</b>— y el logo solo tiene que ser
+          reconocible y no mentir.
+          <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--borde)">
+            Tampoco parecerse al Angel. Ese diseño es de Khara; el nombre biblico es
+            libre justamente porque es anterior al anime, y dibujar al personaje
+            devolveria el problema que el nombre evita.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{
+  "tema": {"editor":"enum",
+           "options":["industrial","eva01","eva02","eva00","eva08"],
+           "default":"industrial","section":"Tema"}
+}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { tema: this.props.tema ?? 'industrial' };
+  }
+}
+</script>
+</body>
+</html>

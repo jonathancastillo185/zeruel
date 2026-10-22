@@ -1,0 +1,10 @@
+[package]
+name = "pipeline-lento"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+zeruel = { path = "../../crates/zeruel" }

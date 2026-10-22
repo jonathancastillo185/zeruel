@@ -1,0 +1,46 @@
+name: Reportar un bug
+description: Algo no funciona como dice el manual.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportarlo. Si es una **vulnerabilidad de seguridad**, no la
+        publiques acá: seguí SECURITY.md.
+  - type: textarea
+    id: que-paso
+    attributes:
+      label: Qué pasó
+      description: Qué esperabas y qué pasó en cambio.
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Cómo reproducirlo
+      description: Comandos exactos, en orden. Cuanto más chico el ejemplo, mejor.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: salida
+    attributes:
+      label: Salida o log
+      description: |
+        La salida del comando, o `state/logs/run-<id>.log`. Revisá que no tenga
+        contraseñas, tokens ni rutas que no quieras publicar.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Versión o commit
+      placeholder: "0.1.0 / abc1234"
+    validations:
+      required: true
+  - type: dropdown
+    id: so
+    attributes:
+      label: Sistema operativo
+      options: [Windows, Linux, macOS, Docker]
+    validations:
+      required: true

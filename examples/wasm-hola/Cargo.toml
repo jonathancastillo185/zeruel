@@ -1,0 +1,15 @@
+# workspace vacio: el guest se compila AISLADO a wasm32-wasip1
+#   cd zeruel/examples/wasm-hola && cargo build --release --target wasm32-wasip1
+[workspace]
+
+[package]
+name = "wasm-hola"
+description = "Task WASM de ejemplo para el sandbox de zeruel"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]

@@ -1,0 +1,157 @@
+{
+  "artboards": [
+    {
+      "file": "Logo.dc.html",
+      "title": "Marca y logo",
+      "x": 2940,
+      "y": -2740,
+      "w": 1180,
+      "h": 1180
+    },
+    {
+      "file": "Industrial.dc.html",
+      "title": "Tema industrial",
+      "x": 0,
+      "y": -1420,
+      "w": 1400,
+      "h": 1180
+    },
+    {
+      "file": "Main.dc.html",
+      "title": "Panel (verde, previo)",
+      "x": 1470,
+      "y": -1420,
+      "w": 1400,
+      "h": 1020
+    },
+    {
+      "file": "Sistema.dc.html",
+      "title": "Sistema visual",
+      "x": 2940,
+      "y": -1420,
+      "w": 900,
+      "h": 1020
+    },
+    {
+      "file": "Corrida.dc.html",
+      "title": "Detalle de corrida",
+      "x": 0,
+      "y": 0,
+      "w": 1400,
+      "h": 1260
+    },
+    {
+      "file": "Comparar.dc.html",
+      "title": "Comparar corridas",
+      "x": 1470,
+      "y": 0,
+      "w": 1360,
+      "h": 1180
+    },
+    {
+      "file": "Calidad.dc.html",
+      "title": "Calidad de datos",
+      "x": 2900,
+      "y": 0,
+      "w": 1400,
+      "h": 1180
+    },
+    {
+      "file": "Dag.dc.html",
+      "title": "Ficha del DAG",
+      "x": 0,
+      "y": 1360,
+      "w": 1220,
+      "h": 1080
+    },
+    {
+      "file": "Codigo.dc.html",
+      "title": "Codigo y grafo",
+      "x": 1290,
+      "y": 1360,
+      "w": 1400,
+      "h": 820
+    },
+    {
+      "file": "Alerta.dc.html",
+      "title": "Detalle de alerta",
+      "x": 2760,
+      "y": 1360,
+      "w": 1360,
+      "h": 1180
+    },
+    {
+      "file": "Salud.dc.html",
+      "title": "Salud del sistema",
+      "x": 0,
+      "y": 2560,
+      "w": 1400,
+      "h": 1000
+    },
+    {
+      "file": "Pipelines.dc.html",
+      "title": "Pipelines desplegados",
+      "x": 1470,
+      "y": 2560,
+      "w": 1320,
+      "h": 960
+    },
+    {
+      "file": "Ajustes.dc.html",
+      "title": "Ajustes",
+      "x": 2860,
+      "y": 2560,
+      "w": 1320,
+      "h": 1180
+    },
+    {
+      "file": "Acceso.dc.html",
+      "title": "Acceso",
+      "x": 4250,
+      "y": 2560,
+      "w": 900,
+      "h": 820
+    }
+  ],
+  "annotations": [
+    {
+      "id": "fila-tema",
+      "x": 0,
+      "y": -1530,
+      "w": 460,
+      "text": "El tema industrial y sus cinco variantes. Cada pantalla tiene el selector arriba: industrial, y las cuatro de los Evas.\n\nAl lado quedan el panel viejo en verde militar y su sistema visual, como referencia de lo que habia antes."
+    },
+    {
+      "id": "fila-procesos",
+      "x": 0,
+      "y": -110,
+      "w": 460,
+      "text": "LOS PROCESOS: que paso en una corrida.\n\nDetalle (Gantt, RAM y CPU en graficos separados, reintentos), comparacion entre dos corridas para responder por que hoy tardo distinto, y los chequeos de calidad con el valor esperado contra el real."
+    },
+    {
+      "id": "fila-dags",
+      "x": 0,
+      "y": 1250,
+      "w": 460,
+      "text": "LOS DAGS: como esta definido y como viene andando.\n\nFicha con cron, historial y SLA; el codigo del pipeline con el grafo al lado; y el detalle de una alerta, que contesta las tres preguntas que importan: que se rompio, desde cuando, y si ya paso antes."
+    },
+    {
+      "id": "fila-sistema",
+      "x": 0,
+      "y": 2450,
+      "w": 460,
+      "text": "EL SISTEMA: lo que sostiene todo lo demas.\n\nSalud (lo que consume nodo por estar prendido, medido), los binarios desplegados —desplegar es copiar un archivo—, los ajustes con su precedencia, y el acceso por token."
+    },
+    {
+      "id": "nota-logo",
+      "x": 2940,
+      "y": -2860,
+      "w": 460,
+      "text": "Cuatro direcciones de logo para Zeruel.\n\nMira la columna de 16 px, no la grande: un logo vive casi siempre chico, y ahi es donde se decide.\n\nNinguna copia el diseño del Angel — eso es de Khara. Todas salen del significado del nombre, que es lo que hace que el nombre biblico sea libre."
+    }
+  ],
+  "launch": {
+    "view": "focused",
+    "file": "Logo.dc.html"
+  }
+}

@@ -1,0 +1,46 @@
+[package]
+name = "zeruel-tasks"
+description = "Tareas de proposito general para zeruel: correr comandos externos"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+zeruel-sdk = { path = "../zeruel-sdk" }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+
+# ureq y no reqwest: es bloqueante, que es lo que encaja con un engine
+# sincronico de hilos. reqwest arrastraria un runtime async entero para no
+# usarlo. Va detras de un feature igual: un pipeline que no baja nada por HTTP
+# no tiene por que compilar TLS.
+ureq = { version = "3", optional = true }
+
+# `postgres` es la version bloqueante de tokio-postgres: envuelve un runtime
+# tokio de un solo hilo puertas adentro. No hay cliente de Postgres maduro en
+# Rust sin tokio, asi que el costo se paga — pero solo lo paga quien active el
+# feature.
+postgres = { version = "0.19", optional = true }
+serde_json = { workspace = true, optional = true }
+
+[features]
+default = ["shell"]
+shell = []
+http = ["dep:ureq"]
+postgres = ["dep:postgres"]
+# Snowflake por su API REST: reusa el cliente HTTP, sin driver nativo.
+snowflake = ["dep:ureq", "dep:serde_json"]
+
+[dev-dependencies]
+tempfile = "3"
+uuid = { workspace = true }
+
+# Solo Windows: leer el pico de memoria de un proceso hijo desde su handle.
+# Es la unica forma exacta de saber cuanta RAM uso un hijo que vivio menos de lo
+# que tarda un redescubrimiento del arbol de procesos.
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Threading",
+] }

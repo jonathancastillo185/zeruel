@@ -1,0 +1,45 @@
+# Finales de línea, declarados de una vez.
+#
+# Sin este archivo el comportamiento depende de `core.autocrlf` de cada máquina,
+# y git avisa en CADA `git add` que va a convertir LF a CRLF. Con esto la regla
+# vive en el repositorio: todos los que clonen se comportan igual, tengan la
+# configuración que tengan.
+
+# Por defecto: git detecta si un archivo es texto y lo guarda con LF.
+* text=auto eol=lf
+
+# --- Excepciones que SÍ necesitan CRLF en el disco ---
+# Los .bat y .cmd de Windows pueden fallar con LF: el intérprete lee la línea
+# entera incluyendo el \n y no encuentra el comando.
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+# PowerShell tolera LF, pero acá los scripts se editan y ejecutan en Windows.
+*.ps1  text eol=crlf
+
+# --- Binarios: git no los toca ni intenta hacer diff ---
+*.exe     binary
+*.dll     binary
+*.wasm    binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.webp    binary
+*.ico     binary
+*.pdf     binary
+*.zip     binary
+*.parquet binary
+*.db      binary
+*.db-wal  binary
+*.db-shm  binary
+
+# --- Diffs más legibles ---
+# git muestra el nombre de la función/struct en la cabecera de cada hunk.
+*.rs   diff=rust
+*.py   diff=python
+*.md   diff=markdown
+*.html diff=html
+
+# Cargo.lock es texto generado: se versiona (hay binarios en el workspace)
+# pero no aporta nada revisarlo línea por línea.
+Cargo.lock linguist-generated=true

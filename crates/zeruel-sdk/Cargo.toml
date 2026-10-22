@@ -1,0 +1,12 @@
+[package]
+name = "zeruel-sdk"
+description = "API para declarar DAGs de zeruel (macro #[dag] y tareas)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+uuid = { workspace = true }

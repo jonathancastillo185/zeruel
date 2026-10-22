@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    .sys{
+      --bg:#fafbf5; --panel:#ffffff; --panel2:#f5f7ec;
+      --borde:#d5ddc0; --borde2:#e8eedb;
+      --v-oscuro:#2a3319; --v-medio:#4a5730; --v-claro:#6e8244; --v-acento:#8fae4d;
+      --texto:#1e2417; --tenue:#616b52; --debil:#8f9a7e;
+      --ok:#2e7d32; --fail:#c62828; --run:#ef6c00; --canc:#546e7a;
+      background:var(--bg); color:var(--texto); min-height:100%;
+      font-family:'Chakra Petch',ui-sans-serif,system-ui,sans-serif; font-size:14px;
+      padding:26px 30px 34px;
+    }
+    .sys *{box-sizing:border-box}
+    a{color:var(--v-claro)} a:hover{color:var(--v-acento)}
+    .t1{
+      font-family:'Orbitron',sans-serif; font-weight:900; font-size:17px;
+      letter-spacing:.24em; text-transform:uppercase; margin:0 0 4px;
+    }
+    .t2{
+      font-family:'Orbitron',sans-serif; font-weight:700; font-size:10px;
+      letter-spacing:.19em; text-transform:uppercase; color:var(--v-medio);
+      margin:26px 0 11px; padding-bottom:6px; border-bottom:1px solid var(--borde);
+    }
+    .lede{color:var(--tenue);font-size:12.5px;max-width:660px;margin:0 0 6px}
+    .g{display:grid;gap:11px}
+    .caja{
+      background:var(--panel); border:1px solid var(--borde); border-radius:3px;
+      padding:13px 15px; position:relative;
+    }
+    .caja::before,.caja::after{
+      content:''; position:absolute; width:9px; height:9px;
+      border-color:var(--v-acento); border-style:solid;
+    }
+    .caja::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+    .caja::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+    .mic{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--debil);font-weight:600}
+    .mono{font-family:'JetBrains Mono',monospace;font-size:11px}
+    .sw{height:52px;border-radius:2px;border:1px solid rgba(0,0,0,.08)}
+    .st{
+      display:inline-flex; align-items:center; gap:5px;
+      font-family:'Orbitron',sans-serif; font-size:8.5px; font-weight:500;
+      letter-spacing:.13em; text-transform:uppercase;
+      padding:3px 7px 3px 6px; border-radius:2px; border-left:2px solid;
+    }
+    .lat{width:6px;height:6px;background:currentColor;display:inline-block;animation:lat 1.3s steps(1,end) infinite}
+    @keyframes lat{0%,49%{opacity:1}50%,100%{opacity:.2}}
+    @media (prefers-reduced-motion:reduce){.lat{animation:none}}
+    .btn{
+      font-family:'Orbitron',sans-serif; font-size:9.5px; font-weight:500;
+      letter-spacing:.13em; text-transform:uppercase;
+      background:var(--v-medio); color:#fff; border:1px solid var(--v-medio);
+      padding:7px 14px; border-radius:2px; cursor:pointer;
+    }
+    .btn.g2{background:transparent;color:var(--v-medio);border-color:var(--borde)}
+    .btn.d{background:transparent;color:var(--fail);border-color:var(--fail)}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{
+      font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--tenue);text-align:left;font-weight:600;
+      padding:0 9px 6px;border-bottom:1px solid var(--borde);
+    }
+    td{padding:6px 9px;border-bottom:1px solid var(--borde2)}
+  </style>
+</helmet>
+
+<div class="sys">
+  <h1 class="t1">Sistema visual</h1>
+  <p class="lede">
+    Las piezas, con sus valores exactos, para pasarlas a <span class="mono">ui.html</span> sin
+    tener que adivinar nada.
+  </p>
+
+  <div class="t2">Tipografia</div>
+  <div class="g" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+    <div class="caja">
+      <div class="mic">Orbitron · titulos y numeros</div>
+      <div style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:23px;letter-spacing:.24em;text-transform:uppercase;margin-top:8px">nodo</div>
+      <div style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:26px;margin-top:6px">248</div>
+      <div class="mono" style="color:var(--tenue);margin-top:7px">900 / 700 / 500 · tracking .13–.30em</div>
+      <div style="font-size:11.5px;color:var(--tenue);margin-top:5px">Geometrica y ancha: es la que pone el tono futurista. Se usa poco y siempre en mayusculas.</div>
+    </div>
+    <div class="caja">
+      <div class="mic">Chakra Petch · interfaz</div>
+      <div style="font-size:19px;font-weight:600;margin-top:8px">Ejecuciones en vivo</div>
+      <div style="font-size:13px;margin-top:4px">Cuadrada y tecnica, pero legible a 12 px en una tabla densa.</div>
+      <div class="mono" style="color:var(--tenue);margin-top:7px">300 / 400 / 500 / 600 / 700</div>
+    </div>
+    <div class="caja">
+      <div class="mic">JetBrains Mono · datos</div>
+      <div class="mono" style="font-size:14px;margin-top:8px">9.781.004 filas</div>
+      <div class="mono" style="font-size:14px">1.910 MB · 4f74a627</div>
+      <div style="font-size:11.5px;color:var(--tenue);margin-top:7px">Todo lo que se compara en vertical: numeros, ids, rutas, logs. Cifras tabulares.</div>
+    </div>
+  </div>
+
+  <div class="t2">Color · cromado (verde militar)</div>
+  <p class="lede">Identidad de la interfaz. No distingue datos, asi que puede ser tan apagado como haga falta.</p>
+  <div class="g" style="grid-template-columns:repeat(6,minmax(0,1fr))">
+    <div><div class="sw" style="background:#2a3319"></div><div class="mono" style="margin-top:5px">#2a3319</div><div class="mic">oscuro</div></div>
+    <div><div class="sw" style="background:#4a5730"></div><div class="mono" style="margin-top:5px">#4a5730</div><div class="mic">medio</div></div>
+    <div><div class="sw" style="background:#6e8244"></div><div class="mono" style="margin-top:5px">#6e8244</div><div class="mic">claro</div></div>
+    <div><div class="sw" style="background:#8fae4d"></div><div class="mono" style="margin-top:5px">#8fae4d</div><div class="mic">acento</div></div>
+    <div><div class="sw" style="background:#d5ddc0"></div><div class="mono" style="margin-top:5px">#d5ddc0</div><div class="mic">borde</div></div>
+    <div><div class="sw" style="background:#fafbf5;border-color:#d5ddc0"></div><div class="mono" style="margin-top:5px">#fafbf5</div><div class="mic">fondo</div></div>
+  </div>
+
+  <div class="t2">Color · estados (reservados)</div>
+  <p class="lede">Nunca se usan para otra cosa. Siempre con texto al lado: el color no lleva el significado solo.</p>
+  <div style="display:flex;gap:11px;flex-wrap:wrap;align-items:center">
+    <span class="st" style="background:#e8f5e9;color:#2e7d32;border-color:#2e7d32">exito</span>
+    <span class="st" style="background:#fdecea;color:#c62828;border-color:#c62828">fallo</span>
+    <span class="st" style="background:#fff3e0;color:#ef6c00;border-color:#ef6c00"><i class="lat"></i>corriendo</span>
+    <span class="st" style="background:#eceff1;color:#546e7a;border-color:#546e7a">cancelado</span>
+    <span class="st" style="background:#eceff1;color:#546e7a;border-color:#546e7a">en cola</span>
+    <span class="mono" style="color:var(--tenue);margin-left:8px">#2e7d32 · #c62828 · #ef6c00 · #546e7a</span>
+  </div>
+
+  <div class="t2">Color · series (validado contra daltonismo)</div>
+  <p class="lede">
+    Identifica pipelines. Pasa los seis chequeos, incluida la separacion entre <b>todos</b> los
+    pares. El verde militar no puede entrar aca: contra cualquier tono calido da ΔE ~2 para un
+    deuteranope, o sea el mismo color. El azul se queda porque es el unico tono lo bastante
+    lejos del verde — y va siempre con el nombre al lado, nunca solo.
+  </p>
+  <div class="g" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+    <div><div class="sw" style="background:#2d7a4f"></div><div class="mono" style="margin-top:5px">#2d7a4f</div><div class="mic">serie 1</div></div>
+    <div><div class="sw" style="background:#4a9fd4"></div><div class="mono" style="margin-top:5px">#4a9fd4</div><div class="mic">serie 2</div></div>
+    <div><div class="sw" style="background:#a8632a"></div><div class="mono" style="margin-top:5px">#a8632a</div><div class="mic">serie 3</div></div>
+    <div><div class="sw" style="background:#9c4a90"></div><div class="mono" style="margin-top:5px">#9c4a90</div><div class="mic">serie 4</div></div>
+  </div>
+
+  <div class="t2">Controles</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button class="btn">accion</button>
+    <button class="btn g2">secundaria</button>
+    <button class="btn d"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-1px;margin-right:5px"><path d="M18 6 6 18M6 6l12 12"/></svg>cancelar</button>
+    <input style="font-family:'Chakra Petch',sans-serif;font-size:12px;border:1px solid var(--borde);border-radius:2px;padding:6px 10px" placeholder="filtrar...">
+    <span class="mono" style="color:var(--tenue)">radio 2 px · mayusculas · tracking .13em</span>
+  </div>
+
+  <div class="t2">Tabla y marcas de esquina</div>
+  <div class="caja">
+    <table>
+      <thead><tr><th>pipeline</th><th>estado</th><th style="text-align:right">duracion</th><th style="text-align:right">filas</th></tr></thead>
+      <tbody>
+        <tr><td><b>ecommerce-etl</b></td><td><span class="st" style="background:#fff3e0;color:#ef6c00;border-color:#ef6c00"><i class="lat"></i>corriendo</span></td><td class="mono" style="text-align:right">00:01:47</td><td class="mono" style="text-align:right">9.781.004</td></tr>
+        <tr><td><b>ventas-diarias</b></td><td><span class="st" style="background:#e8f5e9;color:#2e7d32;border-color:#2e7d32">exito</span></td><td class="mono" style="text-align:right">0,2 s</td><td class="mono" style="text-align:right">2.010</td></tr>
+        <tr><td><b>scraping-precios</b></td><td><span class="st" style="background:#fdecea;color:#c62828;border-color:#c62828">fallo</span></td><td class="mono" style="text-align:right">5,0 m</td><td class="mono" style="text-align:right">0</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:11.5px;color:var(--tenue);margin-top:11px">
+      Las escuadras en las esquinas son la firma visual: dos trazos de 2 px, 9 px de largo,
+      arriba a la izquierda y abajo a la derecha. Aparecen en cada panel y no cuestan nada.
+    </div>
+  </div>
+
+  <div class="t2">Reglas que no se rompen</div>
+  <div class="g" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    <div class="caja">
+      <div style="font-weight:600;font-size:12.5px;margin-bottom:5px">Un solo eje por grafico</div>
+      <div style="font-size:12px;color:var(--tenue)">Filas y RAM son dos graficos, no dos escalas en el mismo. Un segundo eje deja comparar cosas que no se comparan.</div>
+    </div>
+    <div class="caja">
+      <div style="font-weight:600;font-size:12.5px;margin-bottom:5px">El color nunca va solo</div>
+      <div style="font-size:12px;color:var(--tenue)">Cada estado lleva su palabra; cada serie, su nombre al lado. Y los mismos numeros estan siempre en una tabla.</div>
+    </div>
+    <div class="caja">
+      <div style="font-weight:600;font-size:12.5px;margin-bottom:5px">Nada de emoji como icono</div>
+      <div style="font-size:12px;color:var(--tenue)">SVG de trazo, 24×24, grosor 2. Escalan y se recolorean; un emoji cambia de dibujo en cada sistema.</div>
+    </div>
+    <div class="caja">
+      <div style="font-weight:600;font-size:12.5px;margin-bottom:5px">El latido se puede apagar</div>
+      <div style="font-size:12px;color:var(--tenue)">Todo lo que parpadea respeta <span class="mono">prefers-reduced-motion</span>.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

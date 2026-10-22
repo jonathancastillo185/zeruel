@@ -1,0 +1,27 @@
+name: Proponer una mejora
+description: Una idea, un conector nuevo o un cambio de comportamiento.
+labels: [mejora]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qué problema resuelve
+      description: El caso concreto. "Tengo X pipelines que hacen Y y hoy no puedo Z".
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Qué proponés
+    validations:
+      required: true
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas que consideraste
+  - type: checkboxes
+    id: ayuda
+    attributes:
+      label: Contribución
+      options:
+        - label: Me gustaría implementarlo yo

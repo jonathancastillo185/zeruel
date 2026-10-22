@@ -1,0 +1,45 @@
+[package]
+name = "zeruel-core"
+description = "Nucleo de zeruel: metadata store (SQLite) y ejecucion de runs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+zeruel-sdk = { path = "../zeruel-sdk" }
+anyhow = { workspace = true }
+serde = { workspace = true }
+tracing = { workspace = true }
+rusqlite = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+sysinfo = { workspace = true }
+
+# Opcionales: juntos son el 47% del arbol de dependencias (155 y 31 crates).
+# Un pipeline que solo usa tareas Rust no tiene por que pagarlos.
+wasmtime = { workspace = true, optional = true }
+polars = { workspace = true, optional = true }
+
+[features]
+default = []
+sql = ["dep:polars"]
+wasm = ["dep:wasmtime"]
+
+# Solo Windows: Job Objects para el techo duro de memoria. Ya estaba en el
+# arbol (lo traen sysinfo y rusqlite), asi que no agrega nada nuevo.
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_System_JobObjects",
+    "Win32_System_Threading",
+] }
+
+[dev-dependencies]
+tempfile = "3"
+wat = "1.252.0"
+
+# Solo Unix: setrlimit para el techo duro de memoria. libc ya estaba en el
+# arbol (lo traen rusqlite y sysinfo), asi que no agrega nada nuevo.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
